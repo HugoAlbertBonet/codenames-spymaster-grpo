@@ -1,0 +1,12 @@
+# Direct dependencies, mirroring pyproject.toml for pip users.
+# uv users: `uv sync` installs the exact versions pinned in uv.lock.
+accelerate>=1.2,<2
+datasets>=3.2,<4
+matplotlib>=3.9,<4
+numpy>=2.0,<3
+peft>=0.14,<1
+pillow>=11,<12
+sentence-transformers>=3.3,<4
+torch>=2.5,<3
+transformers>=4.47,<5
+trl>=0.14,<0.15

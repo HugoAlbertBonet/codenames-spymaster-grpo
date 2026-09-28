@@ -1,0 +1,6 @@
+# Optional acceleration stack. Install this in a separate .venv-unsloth
+# because Unsloth may require newer torch/TRL/vLLM versions than the baseline.
+unsloth
+unsloth_zoo
+vllm
+sentence-transformers
