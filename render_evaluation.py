@@ -54,7 +54,8 @@ def board_from_evaluation_row(row: Mapping[str, str]) -> CodenamesBoard:
     if words is not None or labels is not None:
         if words is None or labels is None or len(words) != len(labels):
             raise ValueError("board_words and board_labels must be matching JSON lists")
-        return CodenamesBoard(tuple(BoardWord(word, label) for word, label in zip(words, labels)))
+        return CodenamesBoard(tuple(BoardWord(word, label) for word, label in zip(words, labels)),
+                              tuple(_json_list(row, "board_revealed") or []))
     return generate_board(seed=int(row["board_seed"]))
 
 
@@ -110,6 +111,8 @@ def render_evaluation_rows(
         number = int(number_text) if number_text else None
         reward = float(row["reward"])
         invalid_text = " | INVALID" if row.get("invalid", "").lower() == "true" else ""
+        if row.get("abstained", "").lower() == "true":
+            invalid_text += " | ABSTAINED"
         title_prefix = f"{model.upper()} | BOARD {board_index} | REWARD {reward:+.2f}{invalid_text}"
         invalid_reason = row.get("invalid_reason", "")
         if invalid_reason:
@@ -142,7 +145,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--evaluation-file", type=Path, default=Path("results/evaluation.csv"))
     parser.add_argument("--count", type=int, default=3, help="Number of random boards to inspect")
-    parser.add_argument("--model", choices=("base", "trained", "both"), default="trained")
+    parser.add_argument("--model", default="trained", help="CSV model label, or 'both' for base/trained pairs")
     parser.add_argument("--seed", type=int, default=42, help="Random sampling seed")
     parser.add_argument("--output-dir", type=Path, default=Path("results/evaluation-renders"))
     parser.add_argument("--show-labels", action="store_true", help="Show labels on revealed guesses")

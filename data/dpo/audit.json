@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "audited_files": {
+    "manifest.json": "0d37715592fbf54ecabc21b11eb5957e1b6ef392c3f7791920520385e904ce46",
+    "boards.jsonl": "b12fe921bca200e5fc0143d957f332642d71f5167cf6d772c5d86ab29aabd21f",
+    "candidates.jsonl": "cbfd2872167237ca7c0c78957100224c42c174d7f1ec0882669f8ac01e9990fa",
+    "train.jsonl": "18921d8c1503cc12b166f46918353dfd12360351e043397dec9d4647c3d459f2",
+    "validation.jsonl": "e4701d6a117a1a7dbef905e7dbe3612796c1cd13620a2d9130b2c20365f6b88e"
+  },
+  "pairs_replayed": 360,
+  "teammate_artifact_hashes": {
+    "model.safetensors": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+    "config.json": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41",
+    "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+    "1_Pooling/config.json": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23",
+    "tokenizer.json": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "tokenizer_config.json": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b",
+    "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+  },
+  "selection_rule": "safe_positive_feasible_number_v2"
+}

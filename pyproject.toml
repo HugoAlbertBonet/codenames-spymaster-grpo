@@ -1,7 +1,7 @@
 [project]
 name = "codenames-spymaster"
 version = "0.1.0"
-description = "Training a small language model to play the Codenames spymaster with GRPO"
+description = "Codenames spymaster fine-tuning with SFT, DPO and GRPO"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

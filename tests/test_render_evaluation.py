@@ -45,6 +45,10 @@ class RenderEvaluationTests(unittest.TestCase):
             self.assertEqual([row["model"] for row in selected], ["base", "trained"])
             self.assertEqual({row["board_index"] for row in selected}, {"0"})
 
+    def test_custom_model_labels_are_selectable(self):
+        rows = [{"model": "sft-abstention", "board_index": "1"}]
+        self.assertEqual(select_rows(rows, 1, "sft-abstention", 7), rows)
+
 
 if __name__ == "__main__":
     unittest.main()

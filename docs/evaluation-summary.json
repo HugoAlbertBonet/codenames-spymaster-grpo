@@ -1,0 +1,359 @@
+{
+  "rate_denominator": "All evaluated turns, including invalid clues",
+  "suites": {
+    "evaluation-sft-random.csv": {
+      "sha256": "101d603db094d856100b71bde30f588dbe92b46c4e08003c1075ad983b4abcbd",
+      "seed": 80000,
+      "max_revealed": 0,
+      "vocabulary_file": "data/sft/board_vocabulary.txt",
+      "min_similarity": null,
+      "abstention_mode": null,
+      "baseline": "raw Qwen",
+      "status": "SFT comparison",
+      "metrics": {
+        "base": {
+          "episodes": 1000,
+          "average_reward": -1.2835999999999999,
+          "invalid_clue_percent": 55.2,
+          "average_correct_guesses": 0.308,
+          "assassin_hit_percent": 3.8,
+          "red_hit_percent": 26.1
+        },
+        "trained": {
+          "episodes": 1000,
+          "average_reward": 0.3547,
+          "invalid_clue_percent": 5.6,
+          "average_correct_guesses": 1.199,
+          "assassin_hit_percent": 5.8,
+          "red_hit_percent": 37.3
+        }
+      }
+    },
+    "evaluation-sft-partial.csv": {
+      "sha256": "40090d12967d1e8c2402f7c95db4cb3654ddaef3e2de707f0b4c1a4a4303865b",
+      "seed": 81000,
+      "max_revealed": 9,
+      "vocabulary_file": "data/sft/board_vocabulary.txt",
+      "min_similarity": null,
+      "abstention_mode": null,
+      "baseline": "raw Qwen",
+      "status": "SFT comparison",
+      "metrics": {
+        "base": {
+          "episodes": 1000,
+          "average_reward": -1.3146,
+          "invalid_clue_percent": 47.5,
+          "average_correct_guesses": 0.284,
+          "assassin_hit_percent": 6.6,
+          "red_hit_percent": 28.2
+        },
+        "trained": {
+          "episodes": 1000,
+          "average_reward": 0.0881,
+          "invalid_clue_percent": 5.1,
+          "average_correct_guesses": 1.165,
+          "assassin_hit_percent": 9.7,
+          "red_hit_percent": 43.5
+        }
+      }
+    },
+    "evaluation-sft-oov.csv": {
+      "sha256": "7eb6afe3058b0b184fb3fc860b5aea3f05a7f80d8ae47a6c6c63e8f2e5c4027c",
+      "seed": 82000,
+      "max_revealed": 0,
+      "vocabulary_file": "data/evaluation_vocabulary_oov.txt",
+      "min_similarity": null,
+      "abstention_mode": null,
+      "baseline": "raw Qwen",
+      "status": "SFT comparison",
+      "metrics": {
+        "base": {
+          "episodes": 1000,
+          "average_reward": -1.5218,
+          "invalid_clue_percent": 68.8,
+          "average_correct_guesses": 0.203,
+          "assassin_hit_percent": 2.8,
+          "red_hit_percent": 18.3
+        },
+        "trained": {
+          "episodes": 1000,
+          "average_reward": 0.2188,
+          "invalid_clue_percent": 1.6,
+          "average_correct_guesses": 1.231,
+          "assassin_hit_percent": 9.0,
+          "red_hit_percent": 47.5
+        }
+      }
+    },
+    "evaluation-dpo-1000.csv": {
+      "sha256": "3124c04e4f5a302adbbe83e6d40b6dd131f59e5e6ffdb52ef70a81c2b55b0a61",
+      "seed": 170000,
+      "max_revealed": 9,
+      "vocabulary_file": "data/training_vocabulary.txt",
+      "min_similarity": 0.3,
+      "abstention_mode": "all",
+      "baseline": "SFT adapter",
+      "status": "reused development suite",
+      "metrics": {
+        "base": {
+          "episodes": 1000,
+          "average_reward": 0.159,
+          "invalid_clue_percent": 6.3,
+          "average_correct_guesses": 1.02,
+          "assassin_hit_percent": 7.5,
+          "red_hit_percent": 30.6
+        },
+        "trained": {
+          "episodes": 1000,
+          "average_reward": 0.1553,
+          "invalid_clue_percent": 6.5,
+          "average_correct_guesses": 1.006,
+          "assassin_hit_percent": 7.5,
+          "red_hit_percent": 29.5
+        }
+      }
+    },
+    "evaluation-dpo-clue-only.csv": {
+      "sha256": "cd94553c4ad60b3232310166233d8d6ba965ca72a2b47a1ef80f80464bd38968",
+      "seed": 170000,
+      "max_revealed": 9,
+      "vocabulary_file": "data/training_vocabulary.txt",
+      "min_similarity": 0.3,
+      "abstention_mode": "all",
+      "baseline": "SFT adapter",
+      "status": "reused development suite",
+      "metrics": {
+        "base": {
+          "episodes": 1000,
+          "average_reward": 0.159,
+          "invalid_clue_percent": 6.3,
+          "average_correct_guesses": 1.02,
+          "assassin_hit_percent": 7.5,
+          "red_hit_percent": 30.6
+        },
+        "trained": {
+          "episodes": 1000,
+          "average_reward": 0.1352,
+          "invalid_clue_percent": 6.3,
+          "average_correct_guesses": 1.022,
+          "assassin_hit_percent": 8.0,
+          "red_hit_percent": 30.8
+        }
+      }
+    },
+    "evaluation-sft-grpo-game-only.csv": {
+      "sha256": "d8b13c7f7e5d8aa68b7089ef484f7de766128443a9b7132da7aa4bd3f1268f2d",
+      "seed": 170000,
+      "max_revealed": 9,
+      "vocabulary_file": "data/training_vocabulary.txt",
+      "min_similarity": 0.3,
+      "abstention_mode": "all",
+      "baseline": "SFT adapter",
+      "status": "reused development suite",
+      "metrics": {
+        "base": {
+          "episodes": 1000,
+          "average_reward": 0.159,
+          "invalid_clue_percent": 6.3,
+          "average_correct_guesses": 1.02,
+          "assassin_hit_percent": 7.5,
+          "red_hit_percent": 30.6
+        },
+        "trained": {
+          "episodes": 1000,
+          "average_reward": 0.13319999999999999,
+          "invalid_clue_percent": 6.5,
+          "average_correct_guesses": 1.016,
+          "assassin_hit_percent": 7.8,
+          "red_hit_percent": 31.0
+        }
+      }
+    }
+  },
+  "abstention_confirmation": {
+    "source": "abstention-fresh/report.json",
+    "sha256": "d64dd874836a891904ee7583db4138b35e173626e911c353721c702a97ebff86",
+    "overall": {
+      "baseline": {
+        "model": "sft-no-abstention",
+        "episodes": 1500,
+        "average_reward": 0.20146666666666666,
+        "invalid_clue_percent": 3.8,
+        "average_correct_guesses": 1.1873333333333334,
+        "assassin_hit_percent": 8.466666666666667,
+        "red_hit_percent": 42.733333333333334,
+        "abstention_percent": 0.0,
+        "zero_guess_percent": 0.0
+      },
+      "abstaining": {
+        "model": "sft-abstention",
+        "episodes": 1500,
+        "average_reward": 0.29159999999999997,
+        "invalid_clue_percent": 3.8,
+        "average_correct_guesses": 1.128,
+        "assassin_hit_percent": 7.066666666666666,
+        "red_hit_percent": 35.666666666666664,
+        "abstention_percent": 15.0,
+        "zero_guess_percent": 2.1333333333333333
+      },
+      "reward_delta": 0.09013333333333333,
+      "reward_delta_approx_95_ci": [
+        0.05618956725641291,
+        0.12407709941025374
+      ],
+      "assassin_hit_delta_approx_95_ci": [
+        -0.019947818813012178,
+        -0.008052181186987821
+      ],
+      "blue_retention": 0.9500280741156654
+    },
+    "suites": {
+      "random": {
+        "baseline": {
+          "model": "sft-no-abstention",
+          "episodes": 500,
+          "average_reward": 0.25279999999999997,
+          "invalid_clue_percent": 6.4,
+          "average_correct_guesses": 1.186,
+          "assassin_hit_percent": 7.2,
+          "red_hit_percent": 39.0,
+          "abstention_percent": 0.0,
+          "zero_guess_percent": 0.0
+        },
+        "abstaining": {
+          "model": "sft-abstention",
+          "episodes": 500,
+          "average_reward": 0.3338,
+          "invalid_clue_percent": 6.4,
+          "average_correct_guesses": 1.122,
+          "assassin_hit_percent": 6.0,
+          "red_hit_percent": 31.4,
+          "abstention_percent": 16.8,
+          "zero_guess_percent": 2.6
+        },
+        "reward_delta": 0.081,
+        "reward_delta_approx_95_ci": [
+          0.023481416396790168,
+          0.13851858360320984
+        ],
+        "assassin_hit_delta_approx_95_ci": [
+          -0.021553772466239362,
+          -0.0024462275337606386
+        ],
+        "blue_retention": 0.9460370994940978
+      },
+      "partial": {
+        "baseline": {
+          "model": "sft-no-abstention",
+          "episodes": 500,
+          "average_reward": 0.10919999999999999,
+          "invalid_clue_percent": 4.0,
+          "average_correct_guesses": 1.154,
+          "assassin_hit_percent": 9.2,
+          "red_hit_percent": 44.6,
+          "abstention_percent": 0.0,
+          "zero_guess_percent": 0.0
+        },
+        "abstaining": {
+          "model": "sft-abstention",
+          "episodes": 500,
+          "average_reward": 0.2974,
+          "invalid_clue_percent": 4.0,
+          "average_correct_guesses": 1.07,
+          "assassin_hit_percent": 6.6,
+          "red_hit_percent": 32.0,
+          "abstention_percent": 24.6,
+          "zero_guess_percent": 3.0
+        },
+        "reward_delta": 0.1882,
+        "reward_delta_approx_95_ci": [
+          0.11240417543640978,
+          0.2639958245635902
+        ],
+        "assassin_hit_delta_approx_95_ci": [
+          -0.039962781791272876,
+          -0.012037218208727121
+        ],
+        "blue_retention": 0.9272097053726169
+      },
+      "oov": {
+        "baseline": {
+          "model": "sft-no-abstention",
+          "episodes": 500,
+          "average_reward": 0.2424,
+          "invalid_clue_percent": 1.0,
+          "average_correct_guesses": 1.222,
+          "assassin_hit_percent": 9.0,
+          "red_hit_percent": 44.6,
+          "abstention_percent": 0.0,
+          "zero_guess_percent": 0.0
+        },
+        "abstaining": {
+          "model": "sft-abstention",
+          "episodes": 500,
+          "average_reward": 0.24359999999999998,
+          "invalid_clue_percent": 1.0,
+          "average_correct_guesses": 1.192,
+          "assassin_hit_percent": 8.6,
+          "red_hit_percent": 43.6,
+          "abstention_percent": 3.6,
+          "zero_guess_percent": 0.8
+        },
+        "reward_delta": 0.0012000000000000001,
+        "reward_delta_approx_95_ci": [
+          -0.03336158640313553,
+          0.03576158640313553
+        ],
+        "assassin_hit_delta_approx_95_ci": [
+          -0.009538159551912971,
+          0.001538159551912971
+        ],
+        "blue_retention": 0.9754500818330606
+      }
+    },
+    "passed": true
+  },
+  "sft_run": {
+    "model_name": "Qwen/Qwen2.5-1.5B-Instruct",
+    "tokenizer_name": null,
+    "backend": "unsloth",
+    "train_file": "data/sft/train.jsonl",
+    "validation_file": "data/sft/validation.jsonl",
+    "output_dir": "outputs/codenames-sft-1p5b",
+    "epochs": 2.0,
+    "max_steps": -1,
+    "learning_rate": 5e-05,
+    "batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "max_seq_length": 768,
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "save_steps": 50,
+    "save_total_limit": 5,
+    "load_in_4bit": true,
+    "seed": 74000,
+    "resume": false,
+    "dry_run": false,
+    "train_sha256": "75da2e4fe3030b8794cdd05f8f317809e28fb2b2c46afe4e12d41427f101c4d5",
+    "validation_sha256": "70a8be32077aeece41c28aeebfb5833f09730e08a968f03f34f460319a43a560",
+    "validation_metrics": {
+      "eval_loss": 0.33108624815940857,
+      "eval_runtime": 16.8165,
+      "eval_samples_per_second": 11.893,
+      "eval_steps_per_second": 11.893,
+      "epoch": 2.0
+    },
+    "best_checkpoint": "outputs/codenames-sft-1p5b/checkpoint-100"
+  },
+  "recorded_dpo_training_versions": {
+    "torch": "2.11.0",
+    "transformers": "5.15.1",
+    "peft": "0.20.0",
+    "accelerate": "1.14.0",
+    "unsloth": "2026.8.18"
+  },
+  "sft_adapter_hashes": {
+    "adapter_model.safetensors": "a90fcd0f80cbf2b66d11d15e98c7e3f89693b873da85b7ece1afa585d8f65097",
+    "adapter_config.json": "06b09b46eeb7d469956a1292dc7eb6a5446751d57a53fb74ea38ef7c23aeedd4"
+  }
+}

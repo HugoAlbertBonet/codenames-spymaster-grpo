@@ -9,11 +9,23 @@ from train_grpo import (
     format_prompt_for_model,
     make_codenames_reward,
 )
-from codenames_env import Clue, OrderedGuesser, TurnResult
+from codenames_env import Clue, OrderedGuesser, TurnResult, simulate_turn
 from train_grpo import _semantic_margin_bonus
 
 
 class TrainingIntegrationTests(unittest.TestCase):
+    def test_game_only_rewards_equal_simulator_including_repeated_clues(self):
+        example = build_training_examples(num_boards=1, seed=29)[0]
+        board = _board_from_columns(example.board_words, example.board_labels)
+        for label in ("BLUE", "RED", "NEUTRAL", "ASSASSIN"):
+            guesser = OrderedGuesser([tile.word for tile in board.words if tile.label == label])
+            reward = make_codenames_reward(guesser, safety_weight=0, blue_weight=0, duplicate_penalty=0)
+            completions = ["CLUE: galaxy\nNUMBER: 2"] * 2 + ["invalid"]
+            actual = reward(completions=completions,
+                            board_words=[example.board_words] * 3,
+                            board_labels=[example.board_labels] * 3)
+            self.assertEqual(actual, [simulate_turn(text, board, guesser).reward for text in completions])
+
     def test_semantic_margin_bonus_prefers_blue_over_dangerous_words(self):
         example = build_training_examples(num_boards=1, seed=22)[0]
 

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "audited_files": {
+    "manifest.json": "b64f4d9313f0d98787f7ed3f9897e5e6be671a3d06b66f383e6edea1a9d7534c",
+    "boards.jsonl": "b12fe921bca200e5fc0143d957f332642d71f5167cf6d772c5d86ab29aabd21f",
+    "candidates.jsonl": "cbfd2872167237ca7c0c78957100224c42c174d7f1ec0882669f8ac01e9990fa",
+    "train.jsonl": "c2889db142def76a9c11e6e53b0e1abdf0380cae1ea9109d5e0c7e2fc2386903",
+    "validation.jsonl": "a0bb68dc425cd366ce387c30f9ed82cef225d5945184dfb790d3bcd1728c99c3"
+  },
+  "pairs_replayed": 318,
+  "teammate_artifact_hashes": {
+    "model.safetensors": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+    "config.json": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41",
+    "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+    "1_Pooling/config.json": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23",
+    "tokenizer.json": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "tokenizer_config.json": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b",
+    "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+  },
+  "selection_rule": "safe_positive_same_number_different_clue_v1",
+  "pair_mode": "clue-only"
+}

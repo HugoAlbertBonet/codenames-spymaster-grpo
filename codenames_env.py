@@ -8,6 +8,7 @@ guesses; this module scores the resulting turn.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 import random
 import re
 from typing import Protocol, Sequence
@@ -44,6 +45,21 @@ FORBIDDEN_CLUE_WORDS = frozenset(label.lower() for label in LABELS)
 MIN_CLUE_LENGTH = 2
 
 
+def validate_abstention(min_similarity: float | None, abstention_mode: str) -> None:
+    if min_similarity is not None and (not math.isfinite(min_similarity) or not -1 <= min_similarity <= 1):
+        raise ValueError("min_similarity must be a finite cosine similarity between -1 and 1")
+    if abstention_mode not in {"all", "extra"}:
+        raise ValueError("abstention_mode must be 'all' or 'extra'")
+
+
+def add_abstention_args(parser) -> None:
+    """Shared CLI contract for the fixed embedding teammate."""
+    parser.add_argument("--min-similarity", type=float, default=None,
+                        help="Abstain below this cosine similarity (-1..1); omitted means no abstention")
+    parser.add_argument("--abstention-mode", choices=("all", "extra"), default="all",
+                        help="Apply the cutoff to every guess or only the NUMBER+1 extra guess")
+
+
 @dataclass(frozen=True)
 class BoardWord:
     word: str
@@ -57,6 +73,7 @@ class BoardWord:
 @dataclass(frozen=True)
 class CodenamesBoard:
     words: tuple[BoardWord, ...]
+    revealed: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if len(self.words) != 16:
@@ -68,6 +85,18 @@ class CodenamesBoard:
         expected = {BLUE: 6, RED: 6, NEUTRAL: 3, ASSASSIN: 1}
         if counts != expected:
             raise ValueError(f"Expected labels {expected}, got {counts}")
+        if len(set(self.revealed)) != len(self.revealed) or not set(self.revealed) <= set(names):
+            raise ValueError("Revealed words must be unique words from this board")
+        if any(item.word in self.revealed and item.label == ASSASSIN for item in self.words):
+            raise ValueError("A board with a revealed assassin is terminal")
+        if not any(item.label == BLUE and item.word not in self.revealed for item in self.words):
+            raise ValueError("A board with no remaining BLUE words is terminal")
+        if not any(item.label == RED and item.word not in self.revealed for item in self.words):
+            raise ValueError("A board with no remaining RED words is terminal")
+
+    @property
+    def active_words(self) -> tuple[BoardWord, ...]:
+        return tuple(item for item in self.words if item.word not in self.revealed)
 
     @property
     def by_word(self) -> dict[str, BoardWord]:
@@ -76,12 +105,18 @@ class CodenamesBoard:
     def prompt(self) -> str:
         """Serialize a compact description of the board and game rules."""
         words_by_label = {
-            label: [item.word for item in self.words if item.label == label]
+            label: [item.word for item in self.active_words if item.label == label]
             for label in LABELS
         }
         board_sections = "\n".join(
             f"{label}: {', '.join(words_by_label[label])}"
             for label in LABELS
+        )
+        if self.revealed:
+            board_sections += "\nALREADY GUESSED (unavailable): " + ", ".join(self.revealed)
+        state_rule = (
+            "- Already guessed words cannot be selected or counted; target only remaining BLUE words.\n"
+            if self.revealed else ""
         )
         return (
             "You are the Codenames spymaster. Choose one clue word of at least "
@@ -92,6 +127,7 @@ class CodenamesBoard:
             "- The board has 16 words. Position does not matter; the words are "
             "grouped below by role tag.\n"
             "- After your clue, the guesser ranks board words by semantic similarity.\n"
+            f"{state_rule}"
             "- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops "
             "at the first non-BLUE word.\n"
             "- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point "
@@ -184,7 +220,12 @@ class EmbeddingGuesser:
         self,
         model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
         device: str | None = None,
+        min_similarity: float | None = None,
+        abstention_mode: str = "all",
     ) -> None:
+        validate_abstention(min_similarity, abstention_mode)
+        self.min_similarity = min_similarity
+        self.abstention_mode = abstention_mode
         try:
             from sentence_transformers import SentenceTransformer
         except ImportError as exc:
@@ -345,6 +386,9 @@ class TurnResult:
     reward: float
     invalid: bool
     invalid_reason: str | None
+    abstained: bool = False
+    stop_reason: str = "invalid"
+    guess_similarities: tuple[float, ...] = ()
 
 
 def simulate_turn(completion: str, board: CodenamesBoard, guesser: Guesser) -> TurnResult:
@@ -354,21 +398,39 @@ def simulate_turn(completion: str, board: CodenamesBoard, guesser: Guesser) -> T
     except InvalidClue as exc:
         return TurnResult(completion, None, (), (), -2.0, True, str(exc))
 
-    remaining = [item.word for item in board.words]
+    remaining = [item.word for item in board.active_words]
     ranked = guesser.rank(clue.word, remaining)
+    cutoff = getattr(guesser, "min_similarity", None)
+    mode = getattr(guesser, "abstention_mode", "all")
+    validate_abstention(cutoff, mode)
+    similarity_fn = getattr(guesser, "similarities", None)
+    if cutoff is not None and similarity_fn is None:
+        raise ValueError("Similarity abstention requires a guesser with cosine scores")
+    scores = similarity_fn(clue.word, remaining) if similarity_fn else {}
     max_guesses = min(clue.number + 1, len(ranked))
     guesses: list[str] = []
     labels: list[str] = []
     reward = 0.0
+    abstained = False
+    stop_reason = "guess_limit"
+    guess_scores: list[float] = []
     lookup = board.by_word
-    for word in ranked[:max_guesses]:
+    for index, word in enumerate(ranked[:max_guesses]):
+        if cutoff is not None and (mode == "all" or index >= clue.number) and scores[word] < cutoff:
+            abstained = True
+            stop_reason = "similarity_below_threshold"
+            break
         label = lookup[word.lower()].label
         guesses.append(word)
         labels.append(label)
+        if scores:
+            guess_scores.append(scores[word])
         reward += REWARD_BY_LABEL[label]
         if label != BLUE:
+            stop_reason = label.lower()
             break
-    return TurnResult(completion, clue, tuple(guesses), tuple(labels), reward, False, None)
+    return TurnResult(completion, clue, tuple(guesses), tuple(labels), reward, False, None,
+                      abstained, stop_reason, tuple(guess_scores))
 
 
 class OrderedGuesser:
@@ -389,4 +451,5 @@ __all__ = [
     "EmbeddingGuesser", "InvalidClue", "LLMGuesser", "NEUTRAL", "OrderedGuesser", "RED",
     "FORBIDDEN_CLUE_WORDS", "MIN_CLUE_LENGTH", "TurnResult", "generate_board", "parse_and_validate_clue",
     "parse_clue", "simulate_turn", "validate_clue",
+    "add_abstention_args", "validate_abstention",
 ]

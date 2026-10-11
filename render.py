@@ -54,7 +54,7 @@ def render_board(
     except ImportError as exc:
         raise RuntimeError("Rendering requires matplotlib; install it with `uv add matplotlib`") from exc
 
-    revealed = {word.lower() for word in revealed_words}
+    revealed = {word.lower() for word in revealed_words} | set(board.revealed)
     fig, axis = plt.subplots(figsize=(10, 10))
     axis.set_xlim(0, 4)
     axis.set_ylim(0, 4)
@@ -88,7 +88,7 @@ def render_board(
             ha="center",
             va="center",
             color=text_color,
-            fontsize=13,
+            fontsize=max(9, min(13, 130 / len(item.word))),
             fontweight="bold",
         )
 

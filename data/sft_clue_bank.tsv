@@ -1,0 +1,208 @@
+# Authored by the assistant in this session. Each row is a clue and plausible targets.
+# These are association seeds, not 2,000 independently reasoned teacher rollouts.
+# Board construction and embedding checks supply separate, recorded validation.
+orchard	apple pear peach plum cherry lemon
+citrus	orange lemon lime grapefruit tangerine
+berry	strawberry raspberry blackberry blueberry cranberry
+tropical	banana pineapple coconut mango papaya
+salad	lettuce cucumber tomato carrot cabbage spinach
+vegetable	carrot potato onion cabbage broccoli cauliflower
+bakery	bread cake muffin pastry cookie biscuit
+dessert	cake pudding chocolate cookie custard tart
+breakfast	egg cereal toast pancake bacon sausage
+spice	pepper cinnamon ginger clove nutmeg turmeric
+seasoning	salt pepper garlic herb mustard vinegar
+beverage	coffee tea juice milk lemonade cocoa
+dairy	milk cheese butter cream yogurt
+grill	steak burger sausage charcoal barbecue
+seafood	shrimp lobster oyster crab salmon tuna
+pasta	spaghetti noodle macaroni ravioli lasagna
+utensil	fork spoon knife ladle spatula
+cookware	pan pot skillet kettle saucepan
+meal	breakfast lunch dinner supper banquet
+sweet	chocolate candy honey sugar caramel
+equine	horse pony stallion mare foal
+feline	cat lion tiger leopard cheetah jaguar
+canine	dog wolf fox puppy hound
+primate	monkey gorilla chimpanzee ape baboon
+reptile	snake lizard turtle crocodile alligator
+amphibian	frog toad salamander newt
+insect	ant bee wasp butterfly beetle mosquito
+arachnid	spider scorpion tick mite
+avian	eagle owl hawk sparrow robin pigeon
+flightless	penguin ostrich emu kiwi
+waterfowl	duck goose swan mallard
+marine	whale dolphin shark seal walrus
+rodent	mouse rat squirrel hamster beaver
+livestock	cow sheep pig goat cattle
+pet	cat dog hamster rabbit parrot
+predator	lion wolf shark hawk crocodile
+pollination	bee butterfly flower pollen
+nest	egg bird chick twig
+wool	sheep sweater yarn fleece
+antler	deer elk moose reindeer
+forest	tree pine oak birch cedar fir
+flower	rose tulip daisy lily orchid violet
+botany	leaf root stem seed bud petal
+garden	flower shrub hedge lawn compost
+mountain	peak summit ridge cliff glacier
+river	stream creek brook waterfall delta
+ocean	sea tide wave reef coast
+shore	beach sand dune shell surf
+desert	sand cactus oasis camel dune
+volcano	lava magma crater ash eruption
+geology	rock mineral crystal fossil stone
+gemstone	diamond ruby emerald sapphire opal
+metal	gold silver copper iron steel bronze
+weather	rain snow hail wind fog cloud
+storm	thunder lightning hurricane tornado rain
+winter	snow ice frost blizzard sleet
+astronomy	star planet comet galaxy telescope
+space	rocket satellite astronaut orbit capsule
+planet	mars venus mercury jupiter saturn
+cosmos	galaxy nebula star universe comet
+lunar	moon crater astronaut eclipse
+solar	sun sunlight panel eclipse flare
+nautical	anchor sail compass mast ship
+sailing	sail yacht mast rudder keel
+railway	train track station locomotive carriage
+aviation	plane pilot runway airport wing
+automobile	car engine tire steering brake
+bicycle	pedal wheel chain saddle handlebar
+truck	cargo trailer diesel lorry freight
+road	street highway avenue lane asphalt
+navigation	map compass route direction landmark
+harbor	port dock pier ship boat
+airport	runway terminal pilot plane baggage
+travel	passport luggage ticket journey suitcase
+tourism	hotel guide landmark souvenir resort
+camping	tent sleeping lantern fire backpack
+rescue	ambulance firefighter lifeboat helicopter
+postal	letter stamp envelope parcel mail
+medical	doctor nurse surgeon hospital clinic
+surgery	surgeon scalpel operation incision anesthesia
+dentistry	tooth dentist gum molar cavity
+anatomy	heart lung liver kidney brain
+skeleton	bone skull rib spine pelvis
+vision	eye lens retina pupil glasses
+hearing	ear sound noise echo eardrum
+circulation	heart artery vein blood pulse
+respiration	lung breath oxygen air inhale
+pharmacy	pill medicine tablet prescription drug
+infection	bacteria virus fever germ disease
+hygiene	soap shampoo towel toothbrush detergent
+fitness	exercise gym muscle workout treadmill
+injury	wound bruise fracture cut scar
+healing	bandage plaster ointment stitch recovery
+clothing	shirt trousers dress skirt coat
+footwear	shoe boot sandal slipper sneaker
+headwear	hat cap helmet crown bonnet
+tailoring	needle thread button seam fabric
+textile	cotton silk wool linen polyester
+jewelry	ring necklace bracelet earring pendant
+furniture	table chair sofa bed wardrobe
+bedroom	bed pillow blanket mattress duvet
+bathroom	bath shower sink toilet towel
+kitchen	oven fridge stove sink toaster
+lighting	lamp candle bulb torch lantern
+door	key lock handle hinge latch
+cleaning	mop broom bucket sponge vacuum
+plumbing	pipe faucet valve drain sink
+construction	brick cement beam concrete scaffold
+roof	tile chimney gutter attic shingle
+carpentry	wood hammer nail saw chisel
+electricity	wire socket battery current voltage
+tool	hammer wrench pliers screwdriver drill
+musical	piano violin guitar flute drum
+orchestra	violin cello trumpet conductor clarinet
+percussion	drum cymbal tambourine gong xylophone
+stringed	guitar violin cello harp banjo
+brass	trumpet trombone tuba horn cornet
+keyboard	piano organ synthesizer accordion
+song	lyric melody chorus verse singer
+rhythm	beat drum tempo dance
+theater	actor stage curtain audience script
+cinema	film camera director screen projector
+painting	brush canvas pigment easel palette
+sculpture	clay marble statue chisel bronze
+literature	book novel poem author chapter
+writing	pen pencil ink paper notebook
+publishing	book editor manuscript printer magazine
+photography	camera lens shutter tripod flash
+drawing	pencil sketch charcoal crayon paper
+craft	glue scissors paper ribbon tape
+football	goal ball referee tackle goalkeeper
+baseball	bat pitcher glove catcher diamond
+tennis	racket net court serve volley
+golf	club hole fairway putter tee
+swimming	pool lane stroke goggles water
+skiing	snow slope pole boot lift
+boxing	glove ring punch fighter bell
+archery	bow arrow target quiver archer
+chess	pawn knight bishop rook king
+cards	ace deck joker poker bridge
+dice	cube roll chance gamble casino
+athletics	race sprint hurdle relay marathon
+cycling	bicycle pedal wheel helmet rider
+fishing	rod bait hook reel net
+hunting	bow rifle trap hunter prey
+computing	computer processor memory software keyboard
+network	router cable internet server modem
+programming	code algorithm function variable compiler
+storage	disk drive file folder memory
+security	password firewall encryption lock vault
+robotics	robot sensor motor automation machine
+telephone	call handset dial receiver ringtone
+science	laboratory experiment hypothesis theory research
+chemistry	acid base molecule element reaction
+physics	force energy motion gravity mass
+biology	cell organism tissue gene evolution
+mathematics	number equation algebra geometry formula
+geometry	circle triangle square angle polygon
+fraction	half quarter numerator denominator ratio
+measurement	meter ruler scale gauge tape
+time	clock watch hour minute second
+calendar	day week month year date
+education	school teacher student lesson classroom
+university	campus lecture professor degree college
+library	book shelf librarian catalog reading
+commerce	shop store customer sale merchant
+finance	bank money loan interest credit
+currency	dollar pound euro yen coin
+accounting	ledger balance invoice receipt audit
+royalty	king queen prince princess throne
+castle	tower moat drawbridge dungeon fortress
+military	soldier army tank regiment general
+medieval	knight sword armor shield joust
+weapon	sword spear axe bow dagger
+law	judge jury court lawyer trial
+police	badge detective patrol arrest officer
+prison	cell inmate guard bars jail
+religion	church temple prayer priest altar
+mythology	dragon phoenix centaur unicorn mermaid
+fairytale	princess fairy giant magic witch
+piracy	pirate treasure ship sword parrot
+treasure	gold jewel chest coin ruby
+agriculture	farm tractor crop field plow
+harvest	crop grain wheat corn rice
+grain	wheat rice barley oat rye
+fruit	apple pear peach banana plum
+leafy	lettuce spinach cabbage kale chard
+fungus	mushroom yeast mold truffle
+recycling	paper plastic glass metal waste
+habitat	forest desert ocean grassland swamp
+wetland	swamp marsh bog reed pond
+fire	flame smoke ember ash charcoal
+combustion	fuel spark flame heat oxygen
+freezing	ice frost snow glacier cold
+liquid	water milk oil juice mercury
+transparent	glass window lens crystal
+fastener	bolt screw nail pin staple
+container	box bottle jar barrel bucket
+delivery	parcel package courier mail shipment
+ceramics	pottery vase clay kiln porcelain
+fragrance	perfume rose lavender incense scent
+laundry	shirt soap washer detergent dryer
+sewing	needle thread fabric thimble stitch
+emergency	alarm ambulance siren rescue fire
+money	coin banknote cash wallet purse

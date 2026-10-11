@@ -1,4 +1,4 @@
-"""Evaluate the base and GRPO-trained Codenames spymasters."""
+"""Compare Codenames spymasters on identical boards and the same teammate."""
 
 from __future__ import annotations
 
@@ -18,6 +18,8 @@ from codenames_env import (
     BoardWord,
     DEFAULT_VOCABULARY,
     simulate_turn,
+    add_abstention_args,
+    validate_abstention,
 )
 from train_grpo import (
     TrainingExample,
@@ -43,6 +45,12 @@ class EvaluationRecord:
     correct_guesses: int
     board_words: tuple[str, ...]
     board_labels: tuple[str, ...]
+    board_revealed: tuple[str, ...] = ()
+    abstained: bool = False
+    stop_reason: str = ""
+    guess_similarities: tuple[float, ...] = ()
+    min_similarity: float | None = None
+    abstention_mode: str = "all"
 
     @classmethod
     def from_turn(
@@ -52,6 +60,8 @@ class EvaluationRecord:
         board_seed: int,
         result: TurnResult,
         board: CodenamesBoard,
+        min_similarity: float | None = None,
+        abstention_mode: str = "all",
     ) -> "EvaluationRecord":
         return cls(
             model=model,
@@ -68,12 +78,19 @@ class EvaluationRecord:
             correct_guesses=sum(label == "BLUE" for label in result.guessed_labels),
             board_words=tuple(item.word for item in board.words),
             board_labels=tuple(item.label for item in board.words),
+            board_revealed=board.revealed,
+            abstained=result.abstained,
+            stop_reason=result.stop_reason,
+            guess_similarities=result.guess_similarities,
+            min_similarity=min_similarity,
+            abstention_mode=abstention_mode,
         )
 
 
 def board_from_example(example: TrainingExample) -> CodenamesBoard:
     return CodenamesBoard(
-        tuple(BoardWord(word, label) for word, label in zip(example.board_words, example.board_labels))
+        tuple(BoardWord(word, label) for word, label in zip(example.board_words, example.board_labels)),
+        example.board_revealed,
     )
 
 
@@ -91,7 +108,8 @@ def evaluate_completions(
         result = simulate_turn(completion, board_from_example(example), guesser)
         records.append(
             EvaluationRecord.from_turn(
-                model_name, board_index, seed + board_index, result, board_from_example(example)
+                model_name, board_index, seed + board_index, result, board_from_example(example),
+                getattr(guesser, "min_similarity", None), getattr(guesser, "abstention_mode", "all"),
             )
         )
     return records
@@ -106,13 +124,18 @@ def summarize_records(records: Sequence[EvaluationRecord]) -> dict[str, float | 
         "average_reward": sum(record.reward for record in records) / len(records),
         "invalid_clue_percent": 100.0 * sum(record.invalid for record in records) / len(records),
         "average_correct_guesses": sum(record.correct_guesses for record in records) / len(records),
+        "assassin_hit_percent": 100 * sum("ASSASSIN" in record.guessed_labels for record in records) / len(records),
+        "red_hit_percent": 100 * sum("RED" in record.guessed_labels for record in records) / len(records),
+        "abstention_percent": 100 * sum(record.abstained for record in records) / len(records),
+        "zero_guess_percent": 100 * sum(not record.invalid and not record.guesses for record in records) / len(records),
     }
 
 
 CSV_FIELDS = (
     "model", "board_index", "board_seed", "completion", "clue", "number",
     "guesses", "guessed_labels", "reward", "invalid", "invalid_reason", "correct_guesses",
-    "board_words", "board_labels",
+    "board_words", "board_labels", "board_revealed",
+    "abstained", "stop_reason", "guess_similarities", "min_similarity", "abstention_mode",
 )
 
 
@@ -137,6 +160,12 @@ def write_csv(records: Sequence[EvaluationRecord], path: Path) -> None:
                 "correct_guesses": record.correct_guesses,
                 "board_words": json.dumps(record.board_words),
                 "board_labels": json.dumps(record.board_labels),
+                "board_revealed": json.dumps(record.board_revealed),
+                "abstained": record.abstained,
+                "stop_reason": record.stop_reason,
+                "guess_similarities": json.dumps(record.guess_similarities),
+                "min_similarity": record.min_similarity if record.min_similarity is not None else "",
+                "abstention_mode": record.abstention_mode,
             }
             writer.writerow(row)
 
@@ -242,10 +271,9 @@ def model_completion_fn(model: Any, tokenizer: Any, device: Any, max_new_tokens:
         formatted_prompt = format_prompt_for_model(prompt, tokenizer)
         inputs = tokenizer(formatted_prompt, return_tensors="pt").to(device)
         input_length = inputs["input_ids"].shape[-1]
-        output_ids = model.generate(
-            **inputs,
-            generation_config=generation_config,
-        )
+        import torch
+        with torch.inference_mode():
+            output_ids = model.generate(**inputs, generation_config=generation_config)
         return tokenizer.decode(output_ids[0][input_length:], skip_special_tokens=True).strip()
 
     return complete
@@ -273,7 +301,9 @@ def print_summary(records: Sequence[EvaluationRecord]) -> None:
         f"{summary['model']:<8} | episodes={summary['episodes']} | "
         f"reward={summary['average_reward']:.3f} | "
         f"invalid={summary['invalid_clue_percent']:.1f}% | "
-        f"correct guesses/turn={summary['average_correct_guesses']:.3f}"
+        f"correct guesses/turn={summary['average_correct_guesses']:.3f} | "
+        f"assassin={summary['assassin_hit_percent']:.1f}% | "
+        f"abstain={summary['abstention_percent']:.1f}%"
     )
 
 
@@ -281,9 +311,13 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-model", default="Qwen/Qwen2.5-0.5B-Instruct")
     parser.add_argument("--adapter-dir", type=Path, default=Path("outputs/codenames-grpo"))
+    parser.add_argument("--baseline-adapter-dir", type=Path,
+                        help="Compare against this adapter (e.g. SFT), instead of the raw base model")
     parser.add_argument("--num-boards", type=int, default=200)
     parser.add_argument("--seed", type=int, default=20_000)
+    parser.add_argument("--max-revealed", type=int, default=0, help="Evaluate random nonterminal partial boards (0-12)")
     parser.add_argument("--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2")
+    add_abstention_args(parser)
     parser.add_argument("--guesser", choices=("embedding", "llm"), default="embedding")
     parser.add_argument("--llm-guesser-model", default="Qwen/Qwen2.5-0.5B-Instruct")
     parser.add_argument("--llm-guesser-device", choices=("auto", "cuda", "cpu"), default="auto")
@@ -297,14 +331,23 @@ def parse_args() -> argparse.Namespace:
 
 def main(args: argparse.Namespace | None = None) -> None:
     args = args or parse_args()
+    validate_abstention(args.min_similarity, args.abstention_mode)
+    if args.guesser != "embedding" and args.min_similarity is not None:
+        raise ValueError("--min-similarity is only supported by --guesser embedding")
     if not args.adapter_dir.exists():
         raise FileNotFoundError(
             f"Adapter directory not found: {args.adapter_dir}. Run train_grpo.py first."
         )
+    baseline_adapter = getattr(args, "baseline_adapter_dir", None)
+    if baseline_adapter is not None and not baseline_adapter.exists():
+        raise FileNotFoundError(f"Baseline adapter directory not found: {baseline_adapter}")
     vocabulary = load_vocabulary_file(args.vocabulary_file) if args.vocabulary_file else DEFAULT_VOCABULARY
-    examples = build_training_examples(args.num_boards, args.seed, vocabulary=vocabulary)
+    examples = build_training_examples(args.num_boards, args.seed, vocabulary=vocabulary,
+                                       max_revealed=args.max_revealed)
     if args.guesser == "embedding":
-        guesser: Guesser = EmbeddingGuesser(args.embedding_model, device="cpu")
+        guesser: Guesser = EmbeddingGuesser(args.embedding_model, device="cpu",
+                                          min_similarity=args.min_similarity,
+                                          abstention_mode=args.abstention_mode)
     else:
         guesser = LLMGuesser(
             model_name=args.llm_guesser_model,
@@ -312,7 +355,7 @@ def main(args: argparse.Namespace | None = None) -> None:
             max_new_tokens=args.llm_guesser_max_new_tokens,
         )
     base_records = evaluate_checkpoint(
-        args.base_model, None, examples, "base", guesser, args.seed, args.max_new_tokens
+        args.base_model, baseline_adapter, examples, "base", guesser, args.seed, args.max_new_tokens
     )
     trained_records = evaluate_checkpoint(
         args.base_model, args.adapter_dir, examples, "trained", guesser, args.seed, args.max_new_tokens
@@ -321,6 +364,9 @@ def main(args: argparse.Namespace | None = None) -> None:
     write_csv(all_records, args.output_csv)
     write_transcripts(base_records, trained_records, examples, args.transcript_file)
     print(f"Guesser: {args.guesser}")
+    print(f"Baseline ('base' in CSV): {baseline_adapter or args.base_model}")
+    if args.guesser == "embedding":
+        print(f"Abstention: min_similarity={args.min_similarity}, mode={args.abstention_mode}")
     print_summary(base_records)
     print_summary(trained_records)
     print(f"Saved per-episode results to {args.output_csv}")

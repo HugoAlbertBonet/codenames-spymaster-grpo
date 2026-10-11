@@ -1,0 +1,87 @@
+{
+  "attempted_boards": 600,
+  "pairs": 360,
+  "selection_counts": {
+    "kept": 360,
+    "no_clear_gameplay_preference": 99,
+    "no_safe_positive_winner": 141
+  },
+  "selection_rule": "safe_positive_feasible_number_v2",
+  "reference_adapter": "outputs/codenames-sft-1p5b",
+  "reference_adapter_hashes": {
+    "adapter_model.safetensors": "a90fcd0f80cbf2b66d11d15e98c7e3f89693b873da85b7ece1afa585d8f65097",
+    "adapter_config.json": "06b09b46eeb7d469956a1292dc7eb6a5446751d57a53fb74ea38ef7c23aeedd4"
+  },
+  "chosen_number_counts": {
+    "2": 96,
+    "1": 255,
+    "3": 6,
+    "4": 3
+  },
+  "rejected_assassin_pairs": 41,
+  "rejected_red_pairs": 247,
+  "train": 298,
+  "validation": 62,
+  "distinct_chosen_clues": 262,
+  "top_chosen_clues": [
+    [
+      "measurement",
+      5
+    ],
+    [
+      "chemistry",
+      5
+    ],
+    [
+      "electricity",
+      5
+    ],
+    [
+      "football",
+      4
+    ],
+    [
+      "finance",
+      4
+    ],
+    [
+      "vision",
+      4
+    ],
+    [
+      "currency",
+      4
+    ],
+    [
+      "communication",
+      4
+    ],
+    [
+      "law",
+      4
+    ],
+    [
+      "mathematics",
+      3
+    ]
+  ],
+  "chosen_blue_guess_counts": {
+    "3": 40,
+    "1": 145,
+    "2": 175
+  },
+  "revealed_count_distribution": {
+    "0": 39,
+    "7": 50,
+    "3": 37,
+    "1": 33,
+    "5": 34,
+    "8": 33,
+    "2": 26,
+    "6": 44,
+    "9": 27,
+    "4": 37
+  },
+  "same_clue_different_number_pairs": 41,
+  "chosen_number_above_observed_blue_guesses": 43
+}

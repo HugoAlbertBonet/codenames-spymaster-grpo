@@ -1,0 +1,102 @@
+{
+  "selection": "Hand-selected real turns: paired improvement, OOV success, assassin failure. Not a random sample.",
+  "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "sft_adapter": "outputs/codenames-sft-1p5b",
+  "teammate": "sentence-transformers/all-MiniLM-L6-v2",
+  "min_similarity": null,
+  "duration_ms": 1200,
+  "examples": [
+    {
+      "name": "base",
+      "title": "RAW QWEN 1.5B",
+      "source_csv": "evaluation-sft-random.csv",
+      "source_csv_sha256": "101d603db094d856100b71bde30f588dbe92b46c4e08003c1075ad983b4abcbd",
+      "row": {
+        "model": "base",
+        "board_index": "281",
+        "board_seed": "80281",
+        "completion": "CLUE: TURN\nNUMBER: 2",
+        "clue": "turn",
+        "number": "2",
+        "guesses": "[\"throwing\", \"care\"]",
+        "guessed_labels": "[\"BLUE\", \"RED\"]",
+        "reward": "0.0",
+        "invalid": "False",
+        "invalid_reason": "",
+        "correct_guesses": "1",
+        "board_words": "[\"smoke\", \"adapted\", \"mast\", \"ron\", \"throwing\", \"stadium\", \"collective\", \"funny\", \"mercy\", \"shooting\", \"care\", \"quiet\", \"lamp\", \"exposed\", \"reduced\", \"urban\"]",
+        "board_labels": "[\"RED\", \"NEUTRAL\", \"NEUTRAL\", \"RED\", \"BLUE\", \"BLUE\", \"BLUE\", \"BLUE\", \"RED\", \"BLUE\", \"RED\", \"RED\", \"NEUTRAL\", \"ASSASSIN\", \"RED\", \"BLUE\"]",
+        "board_revealed": "[]"
+      }
+    },
+    {
+      "name": "sft",
+      "title": "SFT QWEN 1.5B",
+      "source_csv": "evaluation-sft-random.csv",
+      "source_csv_sha256": "101d603db094d856100b71bde30f588dbe92b46c4e08003c1075ad983b4abcbd",
+      "row": {
+        "model": "trained",
+        "board_index": "281",
+        "board_seed": "80281",
+        "completion": "CLUE: football\nNUMBER: 1",
+        "clue": "football",
+        "number": "1",
+        "guesses": "[\"stadium\", \"throwing\"]",
+        "guessed_labels": "[\"BLUE\", \"BLUE\"]",
+        "reward": "2.0",
+        "invalid": "False",
+        "invalid_reason": "",
+        "correct_guesses": "2",
+        "board_words": "[\"smoke\", \"adapted\", \"mast\", \"ron\", \"throwing\", \"stadium\", \"collective\", \"funny\", \"mercy\", \"shooting\", \"care\", \"quiet\", \"lamp\", \"exposed\", \"reduced\", \"urban\"]",
+        "board_labels": "[\"RED\", \"NEUTRAL\", \"NEUTRAL\", \"RED\", \"BLUE\", \"BLUE\", \"BLUE\", \"BLUE\", \"RED\", \"BLUE\", \"RED\", \"RED\", \"NEUTRAL\", \"ASSASSIN\", \"RED\", \"BLUE\"]",
+        "board_revealed": "[]"
+      }
+    },
+    {
+      "name": "oov",
+      "title": "SFT | RESERVED OOV",
+      "source_csv": "evaluation-sft-oov.csv",
+      "source_csv_sha256": "7eb6afe3058b0b184fb3fc860b5aea3f05a7f80d8ae47a6c6c63e8f2e5c4027c",
+      "row": {
+        "model": "trained",
+        "board_index": "51",
+        "board_seed": "82051",
+        "completion": "CLUE: mountain\nNUMBER: 2",
+        "clue": "mountain",
+        "number": "2",
+        "guesses": "[\"volcano\", \"canyon\", \"snow\"]",
+        "guessed_labels": "[\"BLUE\", \"BLUE\", \"BLUE\"]",
+        "reward": "3.0",
+        "invalid": "False",
+        "invalid_reason": "",
+        "correct_guesses": "3",
+        "board_words": "[\"harbor\", \"canyon\", \"butterfly\", \"violin\", \"winter\", \"wallet\", \"tunnel\", \"snow\", \"feather\", \"volcano\", \"pocket\", \"hammer\", \"bottle\", \"blossom\", \"silver\", \"autumn\"]",
+        "board_labels": "[\"RED\", \"BLUE\", \"BLUE\", \"NEUTRAL\", \"NEUTRAL\", \"ASSASSIN\", \"BLUE\", \"BLUE\", \"NEUTRAL\", \"BLUE\", \"RED\", \"RED\", \"RED\", \"RED\", \"RED\", \"BLUE\"]",
+        "board_revealed": "[]"
+      }
+    },
+    {
+      "name": "failure",
+      "title": "SFT | ASSASSIN FAILURE",
+      "source_csv": "evaluation-sft-random.csv",
+      "source_csv_sha256": "101d603db094d856100b71bde30f588dbe92b46c4e08003c1075ad983b4abcbd",
+      "row": {
+        "model": "trained",
+        "board_index": "807",
+        "board_seed": "80807",
+        "completion": "CLUE: astronomy\nNUMBER: 1",
+        "clue": "astronomy",
+        "number": "1",
+        "guesses": "[\"stars\", \"discovered\"]",
+        "guessed_labels": "[\"BLUE\", \"ASSASSIN\"]",
+        "reward": "-4.0",
+        "invalid": "False",
+        "invalid_reason": "",
+        "correct_guesses": "1",
+        "board_words": "[\"concentration\", \"experienced\", \"study\", \"resources\", \"stars\", \"compared\", \"discovered\", \"steel\", \"reasonable\", \"swan\", \"personnel\", \"sec\", \"carry\", \"wow\", \"caramel\", \"walking\"]",
+        "board_labels": "[\"BLUE\", \"NEUTRAL\", \"RED\", \"RED\", \"BLUE\", \"BLUE\", \"ASSASSIN\", \"NEUTRAL\", \"NEUTRAL\", \"RED\", \"BLUE\", \"BLUE\", \"RED\", \"RED\", \"RED\", \"BLUE\"]",
+        "board_revealed": "[]"
+      }
+    }
+  ]
+}

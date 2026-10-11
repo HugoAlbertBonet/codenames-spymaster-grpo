@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "config": {
+    "sampling": {
+      "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+      "adapter_dir": "/home/hugo/codenames/outputs/codenames-sft-1p5b",
+      "adapter_hashes": {
+        "adapter_model.safetensors": "a90fcd0f80cbf2b66d11d15e98c7e3f89693b873da85b7ece1afa585d8f65097",
+        "adapter_config.json": "06b09b46eeb7d469956a1292dc7eb6a5446751d57a53fb74ea38ef7c23aeedd4"
+      },
+      "max_new_tokens": 48,
+      "samples_per_board": 8,
+      "temperature": 0.8,
+      "top_p": 0.9,
+      "top_k": 40,
+      "repetition_penalty": 1.1,
+      "sampling_seed": 130000,
+      "sampling_protocol": "greedy_plus_sampled_v1_up_to_4_boards_28_sequences"
+    },
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "min_similarity": 0.3,
+    "abstention_mode": "all",
+    "min_reward_gap": 1.0,
+    "num_boards": 500,
+    "validation_boards": 100,
+    "max_revealed": 9,
+    "vocabulary_sha256": "3405bdc61e91be35cf608ad49c782feb98c2f23114b5301e3efe1f91fd31ed9f",
+    "reserved_vocabulary_sha256": "dde56b9857c6ab2f493049644e6eb3412e33d1cefb00110697907732cbc4ad52",
+    "confirmation_report_sha256": "d64dd874836a891904ee7583db4138b35e173626e911c353721c702a97ebff86",
+    "teammate_artifact_hashes": {
+      "model.safetensors": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+      "config.json": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41",
+      "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "1_Pooling/config.json": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23",
+      "tokenizer.json": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+      "tokenizer_config.json": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b",
+      "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  },
+  "boards_sha256": "b12fe921bca200e5fc0143d957f332642d71f5167cf6d772c5d86ab29aabd21f",
+  "excluded_sources": {
+    "data/dpo-smoke/boards.jsonl": "3a81e37cf17f10a217843868a66a1bd3c89469306a78c349811c596936f08485",
+    "data/sft/train.jsonl": "75da2e4fe3030b8794cdd05f8f317809e28fb2b2c46afe4e12d41427f101c4d5",
+    "data/sft/validation.jsonl": "70a8be32077aeece41c28aeebfb5833f09730e08a968f03f34f460319a43a560",
+    "results/abstention-fresh/boards.jsonl": "34a2985763330ac888c14fa6c44a3e65d3da8b9ba8424505fd75f5703db44671",
+    "results/evaluation-1000-v2.csv": "4e288f23d5928ec4e885b832def67d51f74127a217f16584dd810ece2627177e",
+    "results/evaluation-1000.csv": "29664f8fd825294453b9c9a0f5c2f0d6f0fda80ddee95343c43e1e19f51d0571",
+    "results/evaluation-1p5b-embedding.csv": "194a60559d1721e218a0d0a8df148abc034720c53481962101671f1e1cd1a809",
+    "results/evaluation-1p5b-lr1e7.csv": "eea635d26fed0586c089080d141a9c1bc2f6277ec1d27cb58d7b17005db8fcd3",
+    "results/evaluation-checkpoint-800.csv": "6683a293ac7a0902449708ef5f4a0c41570e025f8fbbed19675c44a4d7a25176",
+    "results/evaluation-expanded-1000.csv": "6597e10aca645a69879b9f177880a8fc5a6ca0a84c4506f840efd86aa9c00ccf",
+    "results/evaluation-expanded-checkpoint-475.csv": "68363699172b8852769eb872897d56763d9218c4f0d69420f779a232055ebdd0",
+    "results/evaluation-expanded-oov-1000.csv": "35d8392e364358a03c674b03d40b17a52a3ed4ee9ea714603522e500c0a510f7",
+    "results/evaluation-llm-smoke.csv": "7fb3f2d9c65611c811217420ad877e8a56739e3e6baf0ec8fd8f5f2d5dccfad0",
+    "results/evaluation-sft-oov.csv": "7eb6afe3058b0b184fb3fc860b5aea3f05a7f80d8ae47a6c6c63e8f2e5c4027c",
+    "results/evaluation-sft-partial.csv": "40090d12967d1e8c2402f7c95db4cb3654ddaef3e2de707f0b4c1a4a4303865b",
+    "results/evaluation-sft-random.csv": "101d603db094d856100b71bde30f588dbe92b46c4e08003c1075ad983b4abcbd",
+    "results/evaluation-smoke.csv": "4b450cbd591825cb71a88c3e75c1ea56b02b34c3c9261c30c7eabd5c322ce665",
+    "results/evaluation-unsloth-1000.csv": "4e712f83b650fc9f4b986480443d13ad2835ea4d239b246982dca64280b57f38",
+    "results/evaluation-unsloth-oov-100.csv": "e7c00f0eb65e5c2a550ca6567895da996d2176d626202efb581fda4392ee2390",
+    "results/evaluation-unsloth-oov-llm-100.csv": "f07ee17f4c8ef888238ffce1610fefc2634c4c22e1a97f303c14e627af59e755",
+    "results/evaluation-unsloth.csv": "3638ff8f9f3250b60badc84ee04385ef911e2c684840d3152db5d619f27dc3f0",
+    "results/evaluation.csv": "3105227228f46cc8089d012b0112c6967095ada8d4f626119478288cda0ba69f"
+  }
+}

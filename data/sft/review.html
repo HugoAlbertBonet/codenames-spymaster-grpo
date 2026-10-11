@@ -1,0 +1,583 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Codenames SFT examples</title>
+<style>
+body{font:16px system-ui;margin:24px auto;max-width:1050px;padding:0 16px;background:#f5f7fa;color:#182230}
+article{background:white;padding:20px;margin:20px 0;border-radius:12px;box-shadow:0 1px 5px #ccd}
+h2{font-size:20px}.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{padding:18px 4px;text-align:center;border:3px solid transparent;border-radius:8px;overflow-wrap:anywhere}
+small{display:block;font-size:10px;margin-top:5px}.blue{background:#d8eaff}.red{background:#ffdada}
+.neutral{background:#eee6cc}.assassin{background:#303746;color:white}.target{border-color:#1a9c55}
+.guessed{opacity:.4;text-decoration:line-through}pre{white-space:pre-wrap;font-size:13px}
+select{margin:0 12px 0 4px;padding:5px}[hidden]{display:none}
+</style><h1>SFT board sample</h1><p>Green border = intended target. Faded/crossed words = already guessed.
+Labels are shown here for inspection. The model receives the grouped text prompt below each board.</p>
+<p>Number <select id="number"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+Already guessed <select id="guessed"><option value="">All</option><option>0</option><option>3</option><option>6</option><option>9</option></select></p>
+<article data-number="4" data-guessed="9"><h2>CLUE: security · NUMBER: 4</h2><p>train-01375 · Already guessed: 9 · Embedding turn reward: 5.0</p><div class="board"><div class="tile red guessed"><strong>sparrow</strong><small>RED</small></div><div class="tile red guessed"><strong>flesh</strong><small>RED</small></div><div class="tile red guessed"><strong>elizabeth</strong><small>RED</small></div><div class="tile blue guessed"><strong>fox</strong><small>BLUE</small></div><div class="tile red guessed"><strong>serves</strong><small>RED</small></div><div class="tile neutral guessed"><strong>forced</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>propaganda</strong><small>BLUE</small></div><div class="tile red guessed"><strong>carter</strong><small>RED</small></div><div class="tile assassin"><strong>respectively</strong><small>ASSASSIN</small></div><div class="tile blue target"><strong>encryption</strong><small>BLUE</small></div><div class="tile red"><strong>barrel</strong><small>RED</small></div><div class="tile neutral guessed"><strong>yet</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>lock</strong><small>BLUE</small></div><div class="tile blue target"><strong>vault</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>song</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>password</strong><small>BLUE</small></div></div><p>Intended targets: <b>password, vault, lock, encryption</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: propaganda, encryption, lock, vault, password
+RED: barrel
+NEUTRAL:
+ASSASSIN: respectively
+ALREADY GUESSED (unavailable): fox, song, serves, carter, flesh, forced, sparrow, yet, elizabeth
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="4" data-guessed="0"><h2>CLUE: freezing · NUMBER: 4</h2><p>train-00867 · Already guessed: 0 · Embedding turn reward: 5.0</p><div class="board"><div class="tile blue target"><strong>glacier</strong><small>BLUE</small></div><div class="tile red"><strong>council</strong><small>RED</small></div><div class="tile blue"><strong>supper</strong><small>BLUE</small></div><div class="tile red"><strong>molar</strong><small>RED</small></div><div class="tile red"><strong>hate</strong><small>RED</small></div><div class="tile red"><strong>buildings</strong><small>RED</small></div><div class="tile blue target"><strong>cold</strong><small>BLUE</small></div><div class="tile assassin"><strong>until</strong><small>ASSASSIN</small></div><div class="tile blue target"><strong>ice</strong><small>BLUE</small></div><div class="tile blue target"><strong>frost</strong><small>BLUE</small></div><div class="tile neutral"><strong>never</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>jumping</strong><small>BLUE</small></div><div class="tile red"><strong>argued</strong><small>RED</small></div><div class="tile neutral"><strong>curious</strong><small>NEUTRAL</small></div><div class="tile red"><strong>tragedy</strong><small>RED</small></div><div class="tile neutral"><strong>distinct</strong><small>NEUTRAL</small></div></div><p>Intended targets: <b>ice, frost, glacier, cold</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: glacier, supper, cold, ice, frost, jumping
+RED: council, molar, hate, buildings, argued, tragedy
+NEUTRAL: never, curious, distinct
+ASSASSIN: until
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="0"><h2>CLUE: surgery · NUMBER: 3</h2><p>train-00850 · Already guessed: 0 · Embedding turn reward: 2.7</p><div class="board"><div class="tile neutral"><strong>vice</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>aims</strong><small>BLUE</small></div><div class="tile blue target"><strong>scalpel</strong><small>BLUE</small></div><div class="tile assassin"><strong>dean</strong><small>ASSASSIN</small></div><div class="tile red"><strong>lazy</strong><small>RED</small></div><div class="tile blue target"><strong>surgeon</strong><small>BLUE</small></div><div class="tile red"><strong>back</strong><small>RED</small></div><div class="tile red"><strong>tony</strong><small>RED</small></div><div class="tile blue"><strong>communicate</strong><small>BLUE</small></div><div class="tile red"><strong>technical</strong><small>RED</small></div><div class="tile blue target"><strong>operation</strong><small>BLUE</small></div><div class="tile red"><strong>excited</strong><small>RED</small></div><div class="tile neutral"><strong>kiwi</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>collaboration</strong><small>BLUE</small></div><div class="tile neutral"><strong>ways</strong><small>NEUTRAL</small></div><div class="tile red"><strong>hopes</strong><small>RED</small></div></div><p>Intended targets: <b>scalpel, surgeon, operation</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: aims, scalpel, surgeon, communicate, operation, collaboration
+RED: lazy, back, tony, technical, excited, hopes
+NEUTRAL: vice, kiwi, ways
+ASSASSIN: dean
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="3"><h2>CLUE: river · NUMBER: 3</h2><p>train-01158 · Already guessed: 3 · Embedding turn reward: 4.0</p><div class="board"><div class="tile red"><strong>news</strong><small>RED</small></div><div class="tile red"><strong>gave</strong><small>RED</small></div><div class="tile blue"><strong>eagle</strong><small>BLUE</small></div><div class="tile blue target"><strong>creek</strong><small>BLUE</small></div><div class="tile blue"><strong>issued</strong><small>BLUE</small></div><div class="tile assassin"><strong>membership</strong><small>ASSASSIN</small></div><div class="tile red"><strong>publication</strong><small>RED</small></div><div class="tile blue target"><strong>waterfall</strong><small>BLUE</small></div><div class="tile red guessed"><strong>publishing</strong><small>RED</small></div><div class="tile blue target"><strong>stream</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>magazine</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>keyboard</strong><small>BLUE</small></div><div class="tile red"><strong>egypt</strong><small>RED</small></div><div class="tile neutral"><strong>consistently</strong><small>NEUTRAL</small></div><div class="tile neutral"><strong>five</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>helmet</strong><small>RED</small></div></div><p>Intended targets: <b>waterfall, stream, creek</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: eagle, creek, issued, waterfall, stream, keyboard
+RED: news, gave, publication, egypt
+NEUTRAL: consistently, five
+ASSASSIN: membership
+ALREADY GUESSED (unavailable): helmet, magazine, publishing
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="0"><h2>CLUE: emergency · NUMBER: 2</h2><p>train-00641 · Already guessed: 0 · Embedding turn reward: 1.7</p><div class="board"><div class="tile red"><strong>beautiful</strong><small>RED</small></div><div class="tile blue"><strong>bonus</strong><small>BLUE</small></div><div class="tile red"><strong>seek</strong><small>RED</small></div><div class="tile red"><strong>techniques</strong><small>RED</small></div><div class="tile neutral"><strong>problems</strong><small>NEUTRAL</small></div><div class="tile red"><strong>contrary</strong><small>RED</small></div><div class="tile blue target"><strong>alarm</strong><small>BLUE</small></div><div class="tile blue"><strong>came</strong><small>BLUE</small></div><div class="tile blue"><strong>ice</strong><small>BLUE</small></div><div class="tile blue"><strong>spain</strong><small>BLUE</small></div><div class="tile blue target"><strong>siren</strong><small>BLUE</small></div><div class="tile neutral"><strong>call</strong><small>NEUTRAL</small></div><div class="tile assassin"><strong>leader</strong><small>ASSASSIN</small></div><div class="tile neutral"><strong>causes</strong><small>NEUTRAL</small></div><div class="tile red"><strong>consists</strong><small>RED</small></div><div class="tile red"><strong>immediately</strong><small>RED</small></div></div><p>Intended targets: <b>siren, alarm</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: bonus, alarm, came, ice, spain, siren
+RED: beautiful, seek, techniques, contrary, consists, immediately
+NEUTRAL: problems, call, causes
+ASSASSIN: leader
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="0"><h2>CLUE: automobile · NUMBER: 2</h2><p>train-00209 · Already guessed: 0 · Embedding turn reward: 3.0</p><div class="board"><div class="tile blue"><strong>bold</strong><small>BLUE</small></div><div class="tile blue target"><strong>tire</strong><small>BLUE</small></div><div class="tile blue"><strong>defined</strong><small>BLUE</small></div><div class="tile red"><strong>concept</strong><small>RED</small></div><div class="tile neutral"><strong>salmon</strong><small>NEUTRAL</small></div><div class="tile neutral"><strong>ontario</strong><small>NEUTRAL</small></div><div class="tile red"><strong>mill</strong><small>RED</small></div><div class="tile neutral"><strong>fairly</strong><small>NEUTRAL</small></div><div class="tile red"><strong>ties</strong><small>RED</small></div><div class="tile blue"><strong>equipment</strong><small>BLUE</small></div><div class="tile blue"><strong>looked</strong><small>BLUE</small></div><div class="tile blue target"><strong>brake</strong><small>BLUE</small></div><div class="tile red"><strong>occupation</strong><small>RED</small></div><div class="tile red"><strong>performed</strong><small>RED</small></div><div class="tile red"><strong>taking</strong><small>RED</small></div><div class="tile assassin"><strong>welfare</strong><small>ASSASSIN</small></div></div><p>Intended targets: <b>brake, tire</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: bold, tire, defined, equipment, looked, brake
+RED: concept, mill, ties, occupation, performed, taking
+NEUTRAL: salmon, ontario, fairly
+ASSASSIN: welfare
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="1" data-guessed="6"><h2>CLUE: surgery · NUMBER: 1</h2><p>train-01192 · Already guessed: 6 · Embedding turn reward: 0.7</p><div class="board"><div class="tile blue guessed"><strong>classroom</strong><small>BLUE</small></div><div class="tile blue"><strong>imposed</strong><small>BLUE</small></div><div class="tile neutral"><strong>post</strong><small>NEUTRAL</small></div><div class="tile blue guessed"><strong>development</strong><small>BLUE</small></div><div class="tile red"><strong>scheduled</strong><small>RED</small></div><div class="tile blue guessed"><strong>noticed</strong><small>BLUE</small></div><div class="tile blue"><strong>diabetes</strong><small>BLUE</small></div><div class="tile neutral"><strong>creation</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>commentary</strong><small>RED</small></div><div class="tile red guessed"><strong>order</strong><small>RED</small></div><div class="tile neutral"><strong>examination</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>russia</strong><small>RED</small></div><div class="tile red"><strong>organized</strong><small>RED</small></div><div class="tile red"><strong>loyalty</strong><small>RED</small></div><div class="tile blue target"><strong>surgeon</strong><small>BLUE</small></div><div class="tile assassin"><strong>tear</strong><small>ASSASSIN</small></div></div><p>Intended targets: <b>surgeon</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: imposed, diabetes, surgeon
+RED: scheduled, organized, loyalty
+NEUTRAL: post, creation, examination
+ASSASSIN: tear
+ALREADY GUESSED (unavailable): commentary, noticed, russia, development, order, classroom
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="6"><h2>CLUE: ceramics · NUMBER: 2</h2><p>train-00777 · Already guessed: 6 · Embedding turn reward: 1.7</p><div class="board"><div class="tile red"><strong>danger</strong><small>RED</small></div><div class="tile red guessed"><strong>batman</strong><small>RED</small></div><div class="tile red"><strong>quiver</strong><small>RED</small></div><div class="tile blue target"><strong>vase</strong><small>BLUE</small></div><div class="tile blue"><strong>legitimate</strong><small>BLUE</small></div><div class="tile blue guessed"><strong>definitely</strong><small>BLUE</small></div><div class="tile assassin"><strong>metro</strong><small>ASSASSIN</small></div><div class="tile blue guessed"><strong>images</strong><small>BLUE</small></div><div class="tile neutral"><strong>shops</strong><small>NEUTRAL</small></div><div class="tile neutral"><strong>winner</strong><small>NEUTRAL</small></div><div class="tile neutral guessed"><strong>game</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>porcelain</strong><small>BLUE</small></div><div class="tile red"><strong>ever</strong><small>RED</small></div><div class="tile blue guessed"><strong>happiness</strong><small>BLUE</small></div><div class="tile red guessed"><strong>arms</strong><small>RED</small></div><div class="tile red"><strong>aunt</strong><small>RED</small></div></div><p>Intended targets: <b>vase, porcelain</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: vase, legitimate, porcelain
+RED: danger, quiver, ever, aunt
+NEUTRAL: shops, winner
+ASSASSIN: metro
+ALREADY GUESSED (unavailable): happiness, images, game, batman, definitely, arms
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="6"><h2>CLUE: robotics · NUMBER: 3</h2><p>train-00554 · Already guessed: 6 · Embedding turn reward: 4.0</p><div class="board"><div class="tile blue target"><strong>automation</strong><small>BLUE</small></div><div class="tile neutral"><strong>sales</strong><small>NEUTRAL</small></div><div class="tile red"><strong>barry</strong><small>RED</small></div><div class="tile red guessed"><strong>foreign</strong><small>RED</small></div><div class="tile blue"><strong>electricity</strong><small>BLUE</small></div><div class="tile neutral"><strong>alternative</strong><small>NEUTRAL</small></div><div class="tile neutral guessed"><strong>prepared</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>oyster</strong><small>RED</small></div><div class="tile blue target"><strong>machine</strong><small>BLUE</small></div><div class="tile red guessed"><strong>gathering</strong><small>RED</small></div><div class="tile blue target"><strong>sensor</strong><small>BLUE</small></div><div class="tile blue guessed"><strong>leads</strong><small>BLUE</small></div><div class="tile red"><strong>roots</strong><small>RED</small></div><div class="tile blue guessed"><strong>crap</strong><small>BLUE</small></div><div class="tile red"><strong>skin</strong><small>RED</small></div><div class="tile assassin"><strong>february</strong><small>ASSASSIN</small></div></div><p>Intended targets: <b>machine, automation, sensor</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: automation, electricity, machine, sensor
+RED: barry, roots, skin
+NEUTRAL: sales, alternative
+ASSASSIN: february
+ALREADY GUESSED (unavailable): foreign, leads, gathering, oyster, crap, prepared
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="3"><h2>CLUE: prison · NUMBER: 3</h2><p>train-01478 · Already guessed: 3 · Embedding turn reward: 2.7</p><div class="board"><div class="tile neutral"><strong>chicken</strong><small>NEUTRAL</small></div><div class="tile blue guessed"><strong>absolute</strong><small>BLUE</small></div><div class="tile red"><strong>atlantic</strong><small>RED</small></div><div class="tile blue target"><strong>jail</strong><small>BLUE</small></div><div class="tile red"><strong>arrived</strong><small>RED</small></div><div class="tile red"><strong>universities</strong><small>RED</small></div><div class="tile neutral"><strong>bacteria</strong><small>NEUTRAL</small></div><div class="tile assassin"><strong>round</strong><small>ASSASSIN</small></div><div class="tile blue target"><strong>inmate</strong><small>BLUE</small></div><div class="tile blue"><strong>affairs</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>joker</strong><small>NEUTRAL</small></div><div class="tile red"><strong>friendly</strong><small>RED</small></div><div class="tile red guessed"><strong>pigeon</strong><small>RED</small></div><div class="tile red"><strong>origin</strong><small>RED</small></div><div class="tile blue"><strong>mainly</strong><small>BLUE</small></div><div class="tile blue target"><strong>guard</strong><small>BLUE</small></div></div><p>Intended targets: <b>jail, guard, inmate</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: jail, inmate, affairs, mainly, guard
+RED: atlantic, arrived, universities, friendly, origin
+NEUTRAL: chicken, bacteria
+ASSASSIN: round
+ALREADY GUESSED (unavailable): pigeon, joker, absolute
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="1" data-guessed="3"><h2>CLUE: time · NUMBER: 1</h2><p>train-00292 · Already guessed: 3 · Embedding turn reward: 0.7</p><div class="board"><div class="tile red"><strong>search</strong><small>RED</small></div><div class="tile red guessed"><strong>chisel</strong><small>RED</small></div><div class="tile blue"><strong>shipping</strong><small>BLUE</small></div><div class="tile assassin"><strong>labor</strong><small>ASSASSIN</small></div><div class="tile blue"><strong>girlfriend</strong><small>BLUE</small></div><div class="tile neutral"><strong>cap</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>hotel</strong><small>RED</small></div><div class="tile blue"><strong>barely</strong><small>BLUE</small></div><div class="tile blue"><strong>speak</strong><small>BLUE</small></div><div class="tile red"><strong>version</strong><small>RED</small></div><div class="tile neutral"><strong>network</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>minute</strong><small>BLUE</small></div><div class="tile red guessed"><strong>truck</strong><small>RED</small></div><div class="tile blue"><strong>concerning</strong><small>BLUE</small></div><div class="tile red"><strong>grant</strong><small>RED</small></div><div class="tile neutral"><strong>est</strong><small>NEUTRAL</small></div></div><p>Intended targets: <b>minute</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: shipping, girlfriend, barely, speak, minute, concerning
+RED: search, version, grant
+NEUTRAL: cap, network, est
+ASSASSIN: labor
+ALREADY GUESSED (unavailable): truck, chisel, hotel
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="1" data-guessed="3"><h2>CLUE: amphibian · NUMBER: 1</h2><p>train-00420 · Already guessed: 3 · Embedding turn reward: 2.0</p><div class="board"><div class="tile neutral guessed"><strong>steps</strong><small>NEUTRAL</small></div><div class="tile assassin"><strong>type</strong><small>ASSASSIN</small></div><div class="tile blue"><strong>keeps</strong><small>BLUE</small></div><div class="tile neutral"><strong>equal</strong><small>NEUTRAL</small></div><div class="tile red"><strong>driven</strong><small>RED</small></div><div class="tile red"><strong>suspension</strong><small>RED</small></div><div class="tile red"><strong>consider</strong><small>RED</small></div><div class="tile blue target"><strong>salamander</strong><small>BLUE</small></div><div class="tile blue"><strong>looked</strong><small>BLUE</small></div><div class="tile blue"><strong>featuring</strong><small>BLUE</small></div><div class="tile red guessed"><strong>flows</strong><small>RED</small></div><div class="tile neutral"><strong>consequently</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>evil</strong><small>RED</small></div><div class="tile red"><strong>sport</strong><small>RED</small></div><div class="tile blue"><strong>won</strong><small>BLUE</small></div><div class="tile blue"><strong>following</strong><small>BLUE</small></div></div><p>Intended targets: <b>salamander</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: keeps, salamander, looked, featuring, won, following
+RED: driven, suspension, consider, sport
+NEUTRAL: equal, consequently
+ASSASSIN: type
+ALREADY GUESSED (unavailable): evil, steps, flows
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="6"><h2>CLUE: programming · NUMBER: 2</h2><p>train-00265 · Already guessed: 6 · Embedding turn reward: 1.7</p><div class="board"><div class="tile neutral guessed"><strong>pennsylvania</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>compiler</strong><small>BLUE</small></div><div class="tile red guessed"><strong>hurry</strong><small>RED</small></div><div class="tile red"><strong>experiences</strong><small>RED</small></div><div class="tile red guessed"><strong>engagement</strong><small>RED</small></div><div class="tile blue guessed"><strong>going</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>spend</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>families</strong><small>BLUE</small></div><div class="tile assassin"><strong>feed</strong><small>ASSASSIN</small></div><div class="tile red guessed"><strong>accounts</strong><small>RED</small></div><div class="tile red"><strong>enormous</strong><small>RED</small></div><div class="tile blue"><strong>wondering</strong><small>BLUE</small></div><div class="tile blue target"><strong>algorithm</strong><small>BLUE</small></div><div class="tile blue"><strong>fifth</strong><small>BLUE</small></div><div class="tile red"><strong>side</strong><small>RED</small></div><div class="tile neutral"><strong>scientific</strong><small>NEUTRAL</small></div></div><p>Intended targets: <b>algorithm, compiler</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: compiler, families, wondering, algorithm, fifth
+RED: experiences, enormous, side
+NEUTRAL: scientific
+ASSASSIN: feed
+ALREADY GUESSED (unavailable): hurry, going, pennsylvania, spend, accounts, engagement
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="4" data-guessed="6"><h2>CLUE: emergency · NUMBER: 4</h2><p>train-00299 · Already guessed: 6 · Embedding turn reward: 3.7</p><div class="board"><div class="tile red guessed"><strong>shipping</strong><small>RED</small></div><div class="tile assassin"><strong>tour</strong><small>ASSASSIN</small></div><div class="tile neutral"><strong>charged</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>alarm</strong><small>BLUE</small></div><div class="tile blue target"><strong>rescue</strong><small>BLUE</small></div><div class="tile red"><strong>hurdle</strong><small>RED</small></div><div class="tile red guessed"><strong>half</strong><small>RED</small></div><div class="tile neutral guessed"><strong>decisions</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>volunteer</strong><small>RED</small></div><div class="tile red guessed"><strong>bunch</strong><small>RED</small></div><div class="tile neutral"><strong>die</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>fire</strong><small>BLUE</small></div><div class="tile blue target"><strong>siren</strong><small>BLUE</small></div><div class="tile blue guessed"><strong>opposition</strong><small>BLUE</small></div><div class="tile red"><strong>drops</strong><small>RED</small></div><div class="tile blue"><strong>field</strong><small>BLUE</small></div></div><p>Intended targets: <b>alarm, fire, rescue, siren</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: alarm, rescue, fire, siren, field
+RED: hurdle, drops
+NEUTRAL: charged, die
+ASSASSIN: tour
+ALREADY GUESSED (unavailable): opposition, volunteer, half, shipping, decisions, bunch
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="9"><h2>CLUE: currency · NUMBER: 2</h2><p>train-01453 · Already guessed: 9 · Embedding turn reward: 3.0</p><div class="board"><div class="tile blue guessed"><strong>partly</strong><small>BLUE</small></div><div class="tile red"><strong>while</strong><small>RED</small></div><div class="tile blue"><strong>attracted</strong><small>BLUE</small></div><div class="tile blue"><strong>skull</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>lawn</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>absolutely</strong><small>RED</small></div><div class="tile neutral guessed"><strong>shot</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>terms</strong><small>RED</small></div><div class="tile red guessed"><strong>worst</strong><small>RED</small></div><div class="tile blue guessed"><strong>included</strong><small>BLUE</small></div><div class="tile assassin"><strong>andrew</strong><small>ASSASSIN</small></div><div class="tile red"><strong>further</strong><small>RED</small></div><div class="tile blue target"><strong>dollar</strong><small>BLUE</small></div><div class="tile blue target"><strong>coin</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>paint</strong><small>NEUTRAL</small></div><div class="tile red guessed"><strong>danny</strong><small>RED</small></div></div><p>Intended targets: <b>coin, dollar</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: attracted, skull, dollar, coin
+RED: while, further
+NEUTRAL:
+ASSASSIN: andrew
+ALREADY GUESSED (unavailable): included, danny, paint, partly, absolutely, shot, worst, terms, lawn
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="1" data-guessed="9"><h2>CLUE: circulation · NUMBER: 1</h2><p>train-00364 · Already guessed: 9 · Embedding turn reward: 2.0</p><div class="board"><div class="tile blue guessed"><strong>firms</strong><small>BLUE</small></div><div class="tile blue"><strong>orders</strong><small>BLUE</small></div><div class="tile blue target"><strong>heart</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>far</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>latest</strong><small>BLUE</small></div><div class="tile assassin"><strong>pour</strong><small>ASSASSIN</small></div><div class="tile red guessed"><strong>became</strong><small>RED</small></div><div class="tile red guessed"><strong>fathers</strong><small>RED</small></div><div class="tile red guessed"><strong>full</strong><small>RED</small></div><div class="tile red"><strong>mortgage</strong><small>RED</small></div><div class="tile neutral"><strong>xbox</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>submitted</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>secure</strong><small>NEUTRAL</small></div><div class="tile blue guessed"><strong>max</strong><small>BLUE</small></div><div class="tile red guessed"><strong>nope</strong><small>RED</small></div><div class="tile red guessed"><strong>properly</strong><small>RED</small></div></div><p>Intended targets: <b>heart</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: orders, heart, latest, submitted
+RED: mortgage
+NEUTRAL: xbox
+ASSASSIN: pour
+ALREADY GUESSED (unavailable): far, properly, firms, secure, max, nope, fathers, became, full
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="3"><h2>CLUE: programming · NUMBER: 2</h2><p>train-00949 · Already guessed: 3 · Embedding turn reward: 3.0</p><div class="board"><div class="tile neutral guessed"><strong>yea</strong><small>NEUTRAL</small></div><div class="tile red"><strong>exposure</strong><small>RED</small></div><div class="tile blue guessed"><strong>margin</strong><small>BLUE</small></div><div class="tile blue target"><strong>code</strong><small>BLUE</small></div><div class="tile assassin"><strong>happened</strong><small>ASSASSIN</small></div><div class="tile red"><strong>unicorn</strong><small>RED</small></div><div class="tile red"><strong>tank</strong><small>RED</small></div><div class="tile red"><strong>everyday</strong><small>RED</small></div><div class="tile neutral"><strong>precise</strong><small>NEUTRAL</small></div><div class="tile neutral"><strong>hey</strong><small>NEUTRAL</small></div><div class="tile blue guessed"><strong>alright</strong><small>BLUE</small></div><div class="tile blue target"><strong>algorithm</strong><small>BLUE</small></div><div class="tile blue"><strong>divisions</strong><small>BLUE</small></div><div class="tile red"><strong>instant</strong><small>RED</small></div><div class="tile red"><strong>diagnosis</strong><small>RED</small></div><div class="tile blue"><strong>standard</strong><small>BLUE</small></div></div><p>Intended targets: <b>code, algorithm</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: code, algorithm, divisions, standard
+RED: exposure, unicorn, tank, everyday, instant, diagnosis
+NEUTRAL: precise, hey
+ASSASSIN: happened
+ALREADY GUESSED (unavailable): alright, yea, margin
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="2" data-guessed="3"><h2>CLUE: sailing · NUMBER: 2</h2><p>train-01189 · Already guessed: 3 · Embedding turn reward: 1.7</p><div class="board"><div class="tile red"><strong>toys</strong><small>RED</small></div><div class="tile red"><strong>symbol</strong><small>RED</small></div><div class="tile blue guessed"><strong>passengers</strong><small>BLUE</small></div><div class="tile red"><strong>youtube</strong><small>RED</small></div><div class="tile blue guessed"><strong>worry</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>mine</strong><small>NEUTRAL</small></div><div class="tile red"><strong>passing</strong><small>RED</small></div><div class="tile neutral"><strong>stands</strong><small>NEUTRAL</small></div><div class="tile red"><strong>satisfied</strong><small>RED</small></div><div class="tile blue target"><strong>mast</strong><small>BLUE</small></div><div class="tile red"><strong>killer</strong><small>RED</small></div><div class="tile blue"><strong>abroad</strong><small>BLUE</small></div><div class="tile blue target"><strong>yacht</strong><small>BLUE</small></div><div class="tile neutral"><strong>lift</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>experts</strong><small>BLUE</small></div><div class="tile assassin"><strong>fake</strong><small>ASSASSIN</small></div></div><p>Intended targets: <b>yacht, mast</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: mast, abroad, yacht, experts
+RED: toys, symbol, youtube, passing, satisfied, killer
+NEUTRAL: stands, lift
+ASSASSIN: fake
+ALREADY GUESSED (unavailable): passengers, worry, mine
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="4" data-guessed="3"><h2>CLUE: spice · NUMBER: 4</h2><p>train-00695 · Already guessed: 3 · Embedding turn reward: 5.0</p><div class="board"><div class="tile red"><strong>lock</strong><small>RED</small></div><div class="tile red"><strong>found</strong><small>RED</small></div><div class="tile assassin"><strong>thin</strong><small>ASSASSIN</small></div><div class="tile red"><strong>decide</strong><small>RED</small></div><div class="tile neutral"><strong>reason</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>turmeric</strong><small>BLUE</small></div><div class="tile red guessed"><strong>site</strong><small>RED</small></div><div class="tile neutral guessed"><strong>virus</strong><small>NEUTRAL</small></div><div class="tile neutral"><strong>handled</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>nutmeg</strong><small>BLUE</small></div><div class="tile blue"><strong>timing</strong><small>BLUE</small></div><div class="tile red"><strong>half</strong><small>RED</small></div><div class="tile blue"><strong>acquired</strong><small>BLUE</small></div><div class="tile blue target"><strong>cinnamon</strong><small>BLUE</small></div><div class="tile blue target"><strong>clove</strong><small>BLUE</small></div><div class="tile red guessed"><strong>lately</strong><small>RED</small></div></div><p>Intended targets: <b>clove, turmeric, cinnamon, nutmeg</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: turmeric, nutmeg, timing, acquired, cinnamon, clove
+RED: lock, found, decide, half
+NEUTRAL: reason, handled
+ASSASSIN: thin
+ALREADY GUESSED (unavailable): site, lately, virus
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="3"><h2>CLUE: treasure · NUMBER: 3</h2><p>train-00326 · Already guessed: 3 · Embedding turn reward: 4.0</p><div class="board"><div class="tile neutral"><strong>appreciate</strong><small>NEUTRAL</small></div><div class="tile red"><strong>victoria</strong><small>RED</small></div><div class="tile red"><strong>shaped</strong><small>RED</small></div><div class="tile neutral guessed"><strong>hire</strong><small>NEUTRAL</small></div><div class="tile red"><strong>clinical</strong><small>RED</small></div><div class="tile blue"><strong>foot</strong><small>BLUE</small></div><div class="tile blue target"><strong>gold</strong><small>BLUE</small></div><div class="tile neutral"><strong>full</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>coin</strong><small>BLUE</small></div><div class="tile blue"><strong>noise</strong><small>BLUE</small></div><div class="tile blue"><strong>cool</strong><small>BLUE</small></div><div class="tile assassin"><strong>ford</strong><small>ASSASSIN</small></div><div class="tile red guessed"><strong>accepting</strong><small>RED</small></div><div class="tile red guessed"><strong>encourage</strong><small>RED</small></div><div class="tile red"><strong>concern</strong><small>RED</small></div><div class="tile blue target"><strong>ruby</strong><small>BLUE</small></div></div><p>Intended targets: <b>gold, coin, ruby</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: foot, gold, coin, noise, cool, ruby
+RED: victoria, shaped, clinical, concern
+NEUTRAL: appreciate, full
+ASSASSIN: ford
+ALREADY GUESSED (unavailable): encourage, accepting, hire
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="1" data-guessed="0"><h2>CLUE: religion · NUMBER: 1</h2><p>train-01680 · Already guessed: 0 · Embedding turn reward: 2.0</p><div class="board"><div class="tile red"><strong>asphalt</strong><small>RED</small></div><div class="tile blue"><strong>nail</strong><small>BLUE</small></div><div class="tile blue"><strong>older</strong><small>BLUE</small></div><div class="tile red"><strong>representative</strong><small>RED</small></div><div class="tile red"><strong>par</strong><small>RED</small></div><div class="tile blue"><strong>barbecue</strong><small>BLUE</small></div><div class="tile blue"><strong>ultimate</strong><small>BLUE</small></div><div class="tile red"><strong>sarah</strong><small>RED</small></div><div class="tile red"><strong>conclusions</strong><small>RED</small></div><div class="tile neutral"><strong>asking</strong><small>NEUTRAL</small></div><div class="tile neutral"><strong>tail</strong><small>NEUTRAL</small></div><div class="tile red"><strong>integrated</strong><small>RED</small></div><div class="tile assassin"><strong>sing</strong><small>ASSASSIN</small></div><div class="tile blue target"><strong>prayer</strong><small>BLUE</small></div><div class="tile neutral"><strong>lighting</strong><small>NEUTRAL</small></div><div class="tile blue"><strong>graduate</strong><small>BLUE</small></div></div><p>Intended targets: <b>prayer</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: nail, older, barbecue, ultimate, prayer, graduate
+RED: asphalt, representative, par, sarah, conclusions, integrated
+NEUTRAL: asking, tail, lighting
+ASSASSIN: sing
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="1" data-guessed="9"><h2>CLUE: forest · NUMBER: 1</h2><p>train-00412 · Already guessed: 9 · Embedding turn reward: 2.0</p><div class="board"><div class="tile red"><strong>revolution</strong><small>RED</small></div><div class="tile blue target"><strong>tree</strong><small>BLUE</small></div><div class="tile blue guessed"><strong>hypothesis</strong><small>BLUE</small></div><div class="tile blue guessed"><strong>stay</strong><small>BLUE</small></div><div class="tile blue"><strong>creates</strong><small>BLUE</small></div><div class="tile red guessed"><strong>network</strong><small>RED</small></div><div class="tile blue"><strong>rated</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>watching</strong><small>NEUTRAL</small></div><div class="tile assassin"><strong>warm</strong><small>ASSASSIN</small></div><div class="tile neutral guessed"><strong>der</strong><small>NEUTRAL</small></div><div class="tile neutral guessed"><strong>ron</strong><small>NEUTRAL</small></div><div class="tile red"><strong>accepted</strong><small>RED</small></div><div class="tile blue guessed"><strong>socket</strong><small>BLUE</small></div><div class="tile red guessed"><strong>artificial</strong><small>RED</small></div><div class="tile red"><strong>receive</strong><small>RED</small></div><div class="tile red guessed"><strong>excited</strong><small>RED</small></div></div><p>Intended targets: <b>tree</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: tree, creates, rated
+RED: revolution, accepted, receive
+NEUTRAL:
+ASSASSIN: warm
+ALREADY GUESSED (unavailable): network, artificial, hypothesis, stay, watching, socket, excited, der, ron
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="3"><h2>CLUE: anatomy · NUMBER: 3</h2><p>train-00230 · Already guessed: 3 · Embedding turn reward: 4.0</p><div class="board"><div class="tile red"><strong>either</strong><small>RED</small></div><div class="tile blue"><strong>analysis</strong><small>BLUE</small></div><div class="tile blue target"><strong>lung</strong><small>BLUE</small></div><div class="tile blue"><strong>danger</strong><small>BLUE</small></div><div class="tile neutral"><strong>indeed</strong><small>NEUTRAL</small></div><div class="tile blue guessed"><strong>focus</strong><small>BLUE</small></div><div class="tile neutral guessed"><strong>ruin</strong><small>NEUTRAL</small></div><div class="tile red"><strong>inches</strong><small>RED</small></div><div class="tile red guessed"><strong>montreal</strong><small>RED</small></div><div class="tile assassin"><strong>guards</strong><small>ASSASSIN</small></div><div class="tile red"><strong>passes</strong><small>RED</small></div><div class="tile neutral"><strong>luck</strong><small>NEUTRAL</small></div><div class="tile red"><strong>los</strong><small>RED</small></div><div class="tile blue target"><strong>liver</strong><small>BLUE</small></div><div class="tile blue target"><strong>heart</strong><small>BLUE</small></div><div class="tile red"><strong>trouble</strong><small>RED</small></div></div><p>Intended targets: <b>liver, lung, heart</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- Already guessed words cannot be selected or counted; target only remaining BLUE words.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: analysis, lung, danger, liver, heart
+RED: either, inches, passes, los, trouble
+NEUTRAL: indeed, luck
+ASSASSIN: guards
+ALREADY GUESSED (unavailable): ruin, montreal, focus
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article>
+<article data-number="3" data-guessed="0"><h2>CLUE: automobile · NUMBER: 3</h2><p>train-00722 · Already guessed: 0 · Embedding turn reward: 4.0</p><div class="board"><div class="tile red"><strong>historical</strong><small>RED</small></div><div class="tile assassin"><strong>programming</strong><small>ASSASSIN</small></div><div class="tile red"><strong>des</strong><small>RED</small></div><div class="tile neutral"><strong>tension</strong><small>NEUTRAL</small></div><div class="tile red"><strong>electricity</strong><small>RED</small></div><div class="tile blue"><strong>joined</strong><small>BLUE</small></div><div class="tile blue"><strong>distance</strong><small>BLUE</small></div><div class="tile neutral"><strong>shed</strong><small>NEUTRAL</small></div><div class="tile blue target"><strong>tire</strong><small>BLUE</small></div><div class="tile blue target"><strong>brake</strong><small>BLUE</small></div><div class="tile blue"><strong>shirt</strong><small>BLUE</small></div><div class="tile blue target"><strong>engine</strong><small>BLUE</small></div><div class="tile red"><strong>download</strong><small>RED</small></div><div class="tile red"><strong>arrived</strong><small>RED</small></div><div class="tile red"><strong>announcement</strong><small>RED</small></div><div class="tile neutral"><strong>importance</strong><small>NEUTRAL</small></div></div><p>Intended targets: <b>brake, tire, engine</b></p><details><summary>Actual model prompt</summary><pre>You are the Codenames spymaster. Choose one clue word of at least two letters that helps a fixed semantic guesser select as many BLUE words as possible while avoiding RED, NEUTRAL, and ASSASSIN words.
+
+TURN RULES:
+- The board has 16 words. Position does not matter; the words are grouped below by role tag.
+- After your clue, the guesser ranks board words by semantic similarity.
+- NUMBER is 1-4. The guesser may make NUMBER + 1 guesses, then stops at the first non-BLUE word.
+- BLUE: +1 point. NEUTRAL: -0.3 points and turn ends. RED: -1 point to you, +1 to the other team, and turn ends. ASSASSIN: -5 points and the game ends.
+
+CLUE RULES:
+- Use exactly one alphabetic word with at least two letters; output no explanation.
+- Do not use a board word, a word containing one, or a word contained by one. An invalid clue gives -2 points and ends the turn.
+- BLUE, RED, NEUTRAL, and ASSASSIN are metadata tags, not clue words; never output one of them as the clue.
+
+BOARD:
+BLUE: joined, distance, tire, brake, shirt, engine
+RED: historical, des, electricity, download, arrived, announcement
+NEUTRAL: tension, shed, importance
+ASSASSIN: programming
+
+OUTPUT:
+CLUE: &lt;single word&gt;
+NUMBER: &lt;integer from 1 to 4&gt;</pre></details></article><script>
+const filters=[document.querySelector('#number'),document.querySelector('#guessed')];
+filters.forEach(filter=>filter.addEventListener('change',()=>document.querySelectorAll('article').forEach(card=>{
+card.hidden=filters.some(filter=>filter.value && card.dataset[filter.id]!==filter.value);
+})));</script></html>

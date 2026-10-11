@@ -11,7 +11,9 @@ import argparse
 from collections import Counter
 from dataclasses import dataclass
 import inspect
+import json
 from pathlib import Path
+import random
 from typing import Any, Callable, Sequence
 
 from codenames_env import (
@@ -23,6 +25,7 @@ from codenames_env import (
     OrderedGuesser,
     generate_board,
     simulate_turn,
+    add_abstention_args,
 )
 
 
@@ -34,12 +37,14 @@ class TrainingExample:
     prompt: str
     board_words: tuple[str, ...]
     board_labels: tuple[str, ...]
+    board_revealed: tuple[str, ...] = ()
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "prompt": self.prompt,
             "board_words": list(self.board_words),
             "board_labels": list(self.board_labels),
+            "board_revealed": list(self.board_revealed),
         }
 
 
@@ -61,6 +66,18 @@ def load_vocabulary_file(path: Path) -> tuple[str, ...]:
     return tuple(words)
 
 
+def validate_initial_adapter(path: Path, model_name: str) -> dict[str, Any]:
+    """Check a warm start before loading expensive policy weights."""
+    config = json.loads((path / "adapter_config.json").read_text(encoding="utf-8"))
+    if config.get("peft_type") != "LORA":
+        raise ValueError("--initial-adapter must be a LoRA adapter")
+    def canonical(name: str) -> str:
+        return name.rsplit("/", 1)[-1].lower().replace("-unsloth-bnb-4bit", "")
+    if canonical(config["base_model_name_or_path"]) != canonical(model_name):
+        raise ValueError("--model-name differs from the initial adapter's base_model_name_or_path")
+    return config
+
+
 def find_latest_checkpoint(output_dir: Path) -> Path | None:
     """Return the highest numbered Trainer checkpoint in an output directory."""
     checkpoints: list[tuple[int, Path]] = []
@@ -79,16 +96,28 @@ def build_training_examples(
     num_boards: int = 2_000,
     seed: int = 10_000,
     vocabulary: Sequence[str] = DEFAULT_VOCABULARY,
+    max_revealed: int = 0,
 ) -> list[TrainingExample]:
     """Procedurally create the prompt dataset; there are no ground-truth clues."""
     examples = []
+    if not 0 <= max_revealed <= 12:
+        raise ValueError("max_revealed must be between 0 and 12")
     for offset in range(num_boards):
         board = generate_board(seed=seed + offset, vocabulary=vocabulary)
+        if max_revealed:
+            rng = random.Random(seed + offset + 10_000_000)
+            # Leave at least one word for each team, and never reveal ASSASSIN.
+            protected = {rng.choice([item.word for item in board.words if item.label == label])
+                         for label in ("BLUE", "RED")}
+            revealable = [item.word for item in board.words
+                          if item.label != "ASSASSIN" and item.word not in protected]
+            board = CodenamesBoard(board.words, tuple(rng.sample(revealable, rng.randint(0, max_revealed))))
         examples.append(
             TrainingExample(
                 prompt=board.prompt(),
                 board_words=tuple(item.word for item in board.words),
                 board_labels=tuple(item.label for item in board.words),
+                board_revealed=board.revealed,
             )
         )
     return examples
@@ -105,10 +134,10 @@ def format_prompt_for_model(prompt: str, tokenizer: Any) -> str:
     return prompt
 
 
-def _board_from_columns(words: Sequence[str], labels: Sequence[str]) -> CodenamesBoard:
+def _board_from_columns(words: Sequence[str], labels: Sequence[str], revealed: Sequence[str] = ()) -> CodenamesBoard:
     if len(words) != len(labels):
         raise ValueError("board_words and board_labels must have the same length")
-    return CodenamesBoard(tuple(BoardWord(word, label) for word, label in zip(words, labels)))
+    return CodenamesBoard(tuple(BoardWord(word, label) for word, label in zip(words, labels)), tuple(revealed))
 
 
 def _completion_text(completion: Any) -> str:
@@ -133,19 +162,19 @@ def _semantic_margin_bonus(
     This bounded auxiliary signal gives GRPO a smoother gradient while keeping
     the simulator's actual score as the dominant objective.
     """
-    if result.clue is None:
+    if result.clue is None or (safety_weight == 0 and blue_weight == 0):
         return 0.0
     similarity_fn = getattr(guesser, "similarities", None)
     if similarity_fn is None:
         return 0.0
-    scores = similarity_fn(result.clue.word, [item.word for item in board.words])
+    scores = similarity_fn(result.clue.word, [item.word for item in board.active_words])
     blue_scores = sorted(
-        (scores[item.word] for item in board.words if item.label == "BLUE"),
+        (scores[item.word] for item in board.active_words if item.label == "BLUE"),
         reverse=True,
     )
     dangerous_scores = [
         scores[item.word]
-        for item in board.words
+        for item in board.active_words
         if item.label in {"RED", "NEUTRAL", "ASSASSIN"}
     ]
     if not blue_scores or not dangerous_scores:
@@ -171,16 +200,18 @@ def make_codenames_reward(
         completions: Sequence[Any],
         board_words: Sequence[Sequence[str]],
         board_labels: Sequence[Sequence[str]],
+        board_revealed: Sequence[Sequence[str]] | None = None,
         **_: Any,
     ) -> list[float]:
-        evaluated: list[tuple[Any, str, float, tuple[tuple[str, ...], tuple[str, ...]], str | None]] = []
+        evaluated: list[tuple[Any, str, float, tuple, str | None]] = []
         for index, (completion, words, labels) in enumerate(zip(completions, board_words, board_labels)):
-            board = _board_from_columns(words, labels)
+            revealed = board_revealed[index] if board_revealed is not None else ()
+            board = _board_from_columns(words, labels, revealed)
             completion_text = _completion_text(completion)
             result = simulate_turn(completion_text, board, guesser)
             shaping = _semantic_margin_bonus(result, board, guesser, safety_weight, blue_weight)
             clue_key = result.clue.word if result.clue else None
-            board_key = (tuple(words), tuple(labels))
+            board_key = (tuple(words), tuple(labels), tuple(sorted(revealed)))
             evaluated.append((result, completion_text, shaping, board_key, clue_key))
 
         clue_counts = Counter(
@@ -285,7 +316,8 @@ def train(args: argparse.Namespace) -> None:
     torch, Dataset, LoraConfig, AutoTokenizer, GRPOConfig, GRPOTrainer = _load_training_stack()
 
     vocabulary = load_vocabulary_file(args.vocabulary_file) if args.vocabulary_file else DEFAULT_VOCABULARY
-    examples = build_training_examples(args.num_boards, args.seed, vocabulary=vocabulary)
+    examples = build_training_examples(args.num_boards, args.seed, vocabulary=vocabulary,
+                                       max_revealed=args.max_revealed)
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -307,7 +339,8 @@ def train(args: argparse.Namespace) -> None:
         task_type="CAUSAL_LM",
     )
     reward = make_codenames_reward(
-        EmbeddingGuesser(args.embedding_model, device="cpu"),
+        EmbeddingGuesser(args.embedding_model, device="cpu", min_similarity=args.min_similarity,
+                         abstention_mode=args.abstention_mode),
         debug=args.debug_rewards,
         safety_weight=args.safety_weight,
         blue_weight=args.blue_weight,
@@ -321,6 +354,14 @@ def train(args: argparse.Namespace) -> None:
         "train_dataset": dataset,
         "peft_config": lora_config,
     }
+    if args.initial_adapter:
+        from peft import PeftModel
+        from transformers import AutoModelForCausalLM
+        validate_initial_adapter(args.initial_adapter, args.model_name)
+        base_model = AutoModelForCausalLM.from_pretrained(args.model_name, **config.model_init_kwargs)
+        trainer_kwargs["model"] = PeftModel.from_pretrained(base_model, args.initial_adapter, is_trainable=True)
+        trainer_kwargs.pop("peft_config")
+        config.model_init_kwargs = None
     trainer_parameters = inspect.signature(GRPOTrainer).parameters
     if "processing_class" in trainer_parameters:
         trainer_kwargs["processing_class"] = tokenizer
@@ -389,7 +430,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--smoke-test", action="store_true", help="Test board/reward plumbing without model dependencies")
     parser.add_argument("--model-name", default=DEFAULT_MODEL)
+    parser.add_argument("--initial-adapter", type=Path, help="Warm-start GRPO from an SFT LoRA adapter")
+    parser.add_argument("--max-revealed", type=int, default=0, help="Randomly reveal up to this many words (0-12)")
     parser.add_argument("--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2")
+    add_abstention_args(parser)
     parser.add_argument("--output-dir", type=Path, default=Path("outputs/codenames-grpo"))
     parser.add_argument(
         "--vocabulary-file",

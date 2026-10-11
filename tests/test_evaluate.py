@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from codenames_env import OrderedGuesser
 from evaluate import (
@@ -9,11 +10,34 @@ from evaluate import (
     summarize_records,
     write_csv,
     write_transcripts,
+    main,
+    parse_args,
 )
 from train_grpo import build_training_examples
 
 
 class EvaluationTests(unittest.TestCase):
+    def test_baseline_adapter_replaces_raw_base_and_keeps_same_boards(self):
+        with tempfile.TemporaryDirectory() as directory:
+            initial = Path(directory) / 'sft'
+            trained = Path(directory) / 'dpo'
+            initial.mkdir()
+            trained.mkdir()
+            with patch('sys.argv', ['evaluate.py', '--baseline-adapter-dir', str(initial),
+                    '--adapter-dir', str(trained), '--num-boards', '2',
+                    '--output-csv', str(Path(directory) / 'evaluation.csv'),
+                    '--transcript-file', str(Path(directory) / 'transcripts.txt')]):
+                args = parse_args()
+            guesser = OrderedGuesser([])
+            def fake_checkpoint(model_name, adapter, examples, label, teammate, seed, max_tokens):
+                return evaluate_completions(examples, lambda _: 'bad', label, teammate, seed)
+            with patch('evaluate.EmbeddingGuesser', return_value=guesser), \
+                    patch('evaluate.evaluate_checkpoint', side_effect=fake_checkpoint) as evaluate:
+                main(args)
+            self.assertEqual(evaluate.call_args_list[0].args[1], initial)
+            self.assertEqual(evaluate.call_args_list[1].args[1], trained)
+            self.assertIs(evaluate.call_args_list[0].args[2], evaluate.call_args_list[1].args[2])
+
     def test_evaluation_uses_injected_completion_function_and_reports_metrics(self):
         examples = build_training_examples(num_boards=2, seed=30)
         guesser = OrderedGuesser([item for item in examples[0].board_words])
